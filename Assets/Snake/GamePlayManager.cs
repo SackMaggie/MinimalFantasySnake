@@ -1,8 +1,15 @@
 ﻿
 
+using Snake.Player;
+using Snake.Unit;
+using Snake.World;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+
 namespace Snake
 {
-    public class GamePlayManager : SnakeBehaviour
+    public class GamePlayManager : CustomMonoBehaviour
     {
         ///TODO: Create A UI
         ///TODO: Make a map grid size of 16x16 <see cref="World.WorldGrid"/>
@@ -12,5 +19,61 @@ namespace Snake
         ///Monster <see cref="Snake.Unit.IMonster"/>
         ///TODO: Turn based control
         ///TODO: Collision Combat
+
+
+        public WorldGrid worldGrid;
+        private Vector2Int worldGridSize = new Vector2Int(16, 16);
+        [Space]
+        public SpawnableReference spawnableReference;
+        public GameSetting gameSetting;
+        
+
+        protected override void Start()
+        {
+            base.Start();
+
+            InitilizeGame();
+        }
+
+
+        public void InitilizeGame()
+        {
+            worldGrid.CreateGrid(worldGridSize);
+            
+            SpawnPlayer();
+            _SpawnUnitType(UnitType.HERO);
+            _SpawnUnitType(UnitType.MONSTER);
+
+
+            void _SpawnUnitType(UnitType unitType)
+            {
+                GameSetting.SpawnSetting spawnSetting = gameSetting.GetSpawnSetting(unitType);
+                for (int i = 0; i < spawnSetting.maxSpawnCount; i++)
+                {
+                    SpawnUnitType(unitType, worldGrid.GetEmptyPosition());
+                }
+            }
+
+            SnakePlayer SpawnPlayer()
+            {
+                SnakePlayer snakePlayer = Instantiate(spawnableReference.playerRef, worldGrid.transform, false);
+                snakePlayer.Position = worldGrid.GetBoardMiddle();
+                return snakePlayer;
+            }
+        }
+
+        private IUnit SpawnUnitType(UnitType unitType)
+        {
+            GameObject gameObjectRef = spawnableReference.GetObjectFromType(unitType);
+            GameObject gameObject = Instantiate(gameObjectRef, worldGrid.transform, false);
+            return gameObject.GetComponent<IUnit>();
+        }
+
+        private IUnit SpawnUnitType(UnitType unitType, Vector2Int position)
+        {
+            IUnit unit = SpawnUnitType(unitType);
+            unit.Position = position;
+            return unit;
+        }
     }
 }

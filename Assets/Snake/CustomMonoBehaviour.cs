@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Snake
 {
@@ -8,7 +9,7 @@ namespace Snake
     /// Only the child class get invoked and the parent will not get invoked
     /// Unless accessing via base.XXXX() which will not consistant across the project since someone will declare private void Start() anyway
     /// </summary>
-    public class SnakeBehaviour : MonoBehaviour
+    public class CustomMonoBehaviour : MonoBehaviour
     {
         protected virtual void Start()
         {
@@ -18,6 +19,11 @@ namespace Snake
         protected virtual void Awake()
         {
 
+        }
+
+        protected virtual void Update()
+        {
+            
         }
     }
 }

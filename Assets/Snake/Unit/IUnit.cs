@@ -7,6 +7,7 @@ namespace Snake.Unit
         int Health { get; set; }
         int Attack { get; set; }
         int Defense { get; set; }
+        Vector2Int Position { get; set; }
     }
 
     public interface IHeros : IUnit
