@@ -25,5 +25,10 @@ namespace Snake
         {
             
         }
+
+        protected virtual void OnValidate()
+        {
+
+        }
     }
 }

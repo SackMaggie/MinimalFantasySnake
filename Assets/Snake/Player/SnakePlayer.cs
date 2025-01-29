@@ -8,19 +8,9 @@ namespace Snake.Player
     {
         public static SnakePlayer Instance;
 
-
-
         protected override void Start()
         {
             base.Start();
         }
-    }
-
-    public enum Direction
-    {
-        UP,
-        DOWN,
-        LEFT,
-        RIGHT,
     }
 }
