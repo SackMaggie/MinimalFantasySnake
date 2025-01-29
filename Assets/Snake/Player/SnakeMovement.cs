@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using static UnityEngine.InputSystem.InputAction;
 
-namespace Snake
+namespace Snake.Movement
 {
     /// <summary>
     /// Based on GDD
@@ -98,6 +98,29 @@ namespace Snake
             /// This only work in the scenario where we design each <see cref="Direction"/> pair with oposite value
             /// Could avoid casting if use other type
             return ((sbyte)oldDirection + (sbyte)newDirection) == 0;
+        }
+
+        public static Vector2Int GetRelativePosition(this Direction direction, Vector2Int currentPosition)
+        {
+            const short distance = 1;
+            switch (direction)
+            {
+                case Direction.UP:
+                    currentPosition.y += distance;
+                    break;
+                case Direction.DOWN:
+                    currentPosition.y -= distance;
+                    break;
+                case Direction.LEFT:
+                    currentPosition.x -= distance;
+                    break;
+                case Direction.RIGHT:
+                    currentPosition.x += distance;
+                    break;
+                default:
+                    throw new NotImplementedException(direction.ToString());
+            }
+            return currentPosition;
         }
     }
 

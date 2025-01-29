@@ -1,5 +1,6 @@
 ﻿
 
+using Snake.Movement;
 using Snake.Player;
 using Snake.Unit;
 using Snake.World;
@@ -40,7 +41,8 @@ namespace Snake
         {
             worldGrid.CreateGrid(worldGridSize);
 
-            SpawnPlayer();
+            SnakePlayer snakePlayer = SpawnPlayer();
+            worldGrid.AddUnit(snakePlayer);
             _SpawnUnitType(UnitType.HERO);
             _SpawnUnitType(UnitType.MONSTER);
 
@@ -50,13 +52,15 @@ namespace Snake
                 GameSetting.SpawnSetting spawnSetting = gameSetting.GetSpawnSetting(unitType);
                 for (int i = 0; i < spawnSetting.maxSpawnCount; i++)
                 {
-                    SpawnUnitType(unitType, worldGrid.GetEmptyPosition());
+                    IUnit unit = SpawnUnitType(unitType, worldGrid.GetEmptyPosition());
+                    worldGrid.AddUnit(unit);
                 }
             }
 
             SnakePlayer SpawnPlayer()
             {
                 SnakePlayer snakePlayer = Instantiate(spawnableReference.playerRef, worldGrid.transform, false);
+                snakePlayer.transform.position = worldGrid.transform.position;
                 snakePlayer.Position = worldGrid.GetBoardMiddle();
                 SnakeMovement snakeMovement = snakePlayer.GetComponent<SnakeMovement>();
                 snakeMovement.onMove = (movementContext) => OnPlayerMove(snakePlayer, movementContext);
@@ -67,9 +71,9 @@ namespace Snake
         private IUnit SpawnUnitType(UnitType unitType)
         {
             GameObject gameObjectRef = spawnableReference.GetObjectFromType(unitType);
-            GameObject gameObject = Instantiate(gameObjectRef, worldGrid.transform, false);
-            gameObject.transform.position = worldGrid.transform.position;
-            return gameObject.GetComponent<IUnit>();
+            GameObject newGameObject = Instantiate(gameObjectRef, worldGrid.transform, false);
+            newGameObject.transform.position = worldGrid.transform.position;
+            return newGameObject.GetComponent<IUnit>();
         }
 
         private IUnit SpawnUnitType(UnitType unitType, Vector2Int position)
@@ -93,7 +97,44 @@ namespace Snake
         /// <exception cref="NotImplementedException"></exception>
         private bool OnPlayerMove(SnakePlayer snakePlayer, MovementContext movementContext)
         {
-            throw new NotImplementedException();
+            //validation
+            if (snakePlayer == null)
+                throw new ArgumentNullException(nameof(snakePlayer));
+            if (movementContext == null)
+                throw new ArgumentNullException(nameof(movementContext));
+
+            IUnit playerUnit = snakePlayer;
+            Vector2Int currentPosition = snakePlayer.Position;
+            IUnit unitOnPosition = worldGrid.GetUnit(currentPosition);
+            if (unitOnPosition == null || playerUnit != unitOnPosition)
+                throw new Exception($"Player is not on world grid");
+
+            //process movementContext
+            Vector2Int nextPosition = movementContext.newDirection.GetRelativePosition(currentPosition);
+            IUnit unit = worldGrid.GetUnit(nextPosition);
+            switch (unit)
+            {
+                case IHeros hero:
+                    Debug.LogWarning("Collide with hero");
+                    worldGrid.Move(currentPosition, nextPosition);
+                    break;
+                case IMonster monster:
+                    Debug.LogWarning("Collide with monster");
+                    worldGrid.Move(currentPosition, nextPosition);
+                    break;
+                case IPlayer player:
+                    Debug.LogWarning("Collide with player");
+                    worldGrid.Move(currentPosition, nextPosition);
+                    break;
+                case null:
+                    Debug.LogWarning("No Collision, just move");
+                    worldGrid.Move(currentPosition, nextPosition);
+                    break;
+                default:
+                    break;
+            }
+
+            return true;
         }
     }
 }

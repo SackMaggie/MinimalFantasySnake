@@ -101,6 +101,34 @@ namespace Snake.World
 
         internal Vector2Int GetBoardMiddle() => new Vector2Int(gridSize.x / 2, gridSize.y / 2);
 
+        internal void AddUnit(IUnit unit)
+        {
+            Vector2Int position = unit.Position;
+            if (UnitGrid[position.x, position.y] != null)
+                throw new Exception($"This position is already occupied {position}");
+            UnitGrid[position.x, position.y] = unit;
+        }
+
+        internal IUnit GetUnit(Vector2Int position) => UnitGrid[position.x, position.y];
+
+        internal void Move(Vector2Int from, Vector2Int to)
+        {
+            IUnit sourceUnit = UnitGrid[from.x, from.y] ?? throw new Exception($"No unit at position {from}");
+            IUnit targetUnit = UnitGrid[to.x, to.y];
+            if (targetUnit != null)
+                throw new Exception($"Position is occupied {to} by {targetUnit}");
+            UnitGrid[to.x, to.y] = UnitGrid[from.x, from.y];
+            UnitGrid[from.x, from.y] = null;
+
+            if (UnitGrid[to.x, to.y] == null)
+                throw new Exception("Reference got lost while move");
+
+            UnitGrid[to.x, to.y].Position = to;
+
+            if (UnitGrid[from.x, from.y] != null)
+                throw new Exception("Source not get replace with null");
+        }
+
         [Serializable]
         private class TestUnit : IUnit
         {
