@@ -64,6 +64,10 @@ namespace Snake
                 snakePlayer.Position = worldGrid.GetBoardMiddle();
                 SnakeMovement snakeMovement = snakePlayer.GetComponent<SnakeMovement>();
                 snakeMovement.onMove = (movementContext) => OnPlayerMove(snakePlayer, movementContext);
+
+                //temp just for clarification
+                snakePlayer.GetComponent<Renderer>().material.color = Color.blue;
+
                 return snakePlayer;
             }
         }
@@ -73,6 +77,15 @@ namespace Snake
             GameObject gameObjectRef = spawnableReference.GetObjectFromType(unitType);
             GameObject newGameObject = Instantiate(gameObjectRef, worldGrid.transform, false);
             newGameObject.transform.position = worldGrid.transform.position;
+
+            //temp just for clarification
+            newGameObject.GetComponent<Renderer>().material.color = unitType switch
+            {
+                UnitType.MONSTER => Color.red,
+                UnitType.HERO => Color.green,
+                _ => throw new NotImplementedException(unitType.ToString()),
+            };
+
             return newGameObject.GetComponent<IUnit>();
         }
 
