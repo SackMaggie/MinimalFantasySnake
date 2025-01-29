@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Snake.Movement;
+using UnityEngine;
 
 namespace Snake.Unit
 {
@@ -11,6 +12,7 @@ namespace Snake.Unit
         [SerializeField] private int health;
         [SerializeField] private int attack;
         [SerializeField] private int defense;
+        [SerializeField] private Direction direction;
 
 
         public virtual Vector2Int Position
@@ -27,5 +29,6 @@ namespace Snake.Unit
         public virtual int Health { get => health; set => health = value; }
         public virtual int Attack { get => attack; set => attack = value; }
         public virtual int Defense { get => defense; set => defense = value; }
+        public Direction Direction { get => direction; set => direction = value; }
     }
 }

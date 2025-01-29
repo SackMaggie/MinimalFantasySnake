@@ -1,4 +1,5 @@
 ﻿
+using Snake.Movement;
 using Snake.Unit;
 using System;
 using System.Collections.Generic;
@@ -129,6 +130,11 @@ namespace Snake.World
                 throw new Exception("Source not get replace with null");
         }
 
+        internal void Remove(Vector2Int position)
+        {
+            UnitGrid[position.x, position.y] = null;
+        }
+
         [Serializable]
         private class TestUnit : IUnit
         {
@@ -136,10 +142,12 @@ namespace Snake.World
             [SerializeField] private int attack;
             [SerializeField] private int defense;
             [SerializeField] private Vector2Int position;
+            [SerializeField] private Direction direction;
             public int Health { get => health; set => health = value; }
             public int Attack { get => attack; set => attack = value; }
             public int Defense { get => defense; set => defense = value; }
             public Vector2Int Position { get => position; set => position = value; }
+            public Direction Direction { get => direction; set => direction = value; }
         }
     }
 }

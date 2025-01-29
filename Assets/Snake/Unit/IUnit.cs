@@ -1,3 +1,5 @@
+using Snake.Movement;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Snake.Unit
@@ -8,11 +10,12 @@ namespace Snake.Unit
         int Attack { get; set; }
         int Defense { get; set; }
         Vector2Int Position { get; set; }
+        Direction Direction { get; set; }
     }
 
     public interface IHeros : IUnit
     {
-
+        
     }
 
     public interface IMonster : IUnit
@@ -27,6 +30,6 @@ namespace Snake.Unit
     /// </summary>
     public interface IPlayer : IUnit
     {
-
+        IList<IUnit> ChildHero { get; }
     }
 }

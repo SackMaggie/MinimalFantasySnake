@@ -1,11 +1,10 @@
-﻿
-
-using Snake.Movement;
+﻿using Snake.Movement;
 using Snake.Player;
 using Snake.Unit;
 using Snake.World;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Snake
@@ -116,11 +115,13 @@ namespace Snake
             if (movementContext == null)
                 throw new ArgumentNullException(nameof(movementContext));
 
-            IUnit playerUnit = snakePlayer;
+            IPlayer playerUnit = snakePlayer;
             Vector2Int currentPosition = snakePlayer.Position;
             IUnit unitOnPosition = worldGrid.GetUnit(currentPosition);
             if (unitOnPosition == null || playerUnit != unitOnPosition)
                 throw new Exception($"Player is not on world grid");
+
+            playerUnit.Direction = movementContext.newDirection;
 
             //process movementContext
             Vector2Int nextPosition = movementContext.newDirection.GetRelativePosition(currentPosition);
@@ -129,9 +130,21 @@ namespace Snake
             {
                 case IHeros hero:
                     Debug.LogWarning("Collide with hero");
+                    //TODO: Check if that hero is our child for gameover
+                    //TODO: Remove hero from the map
+                    //TODO: Move the player into position
+                    //TODO: Add hero as a player child
+                    //TODO: Add hero back to the map
+                    worldGrid.Remove(nextPosition);
                     worldGrid.Move(currentPosition, nextPosition);
+                    IUnit lastHeroUnit = playerUnit.ChildHero.LastOrDefault();
+                    //TODO: Use direction from last unit or player
+                    playerUnit.ChildHero.Add(hero);
                     break;
                 case IMonster monster:
+                    //TODO: Combat
+                    //TODO: Move the player into position
+                    //TODO: Remove monster from the map
                     Debug.LogWarning("Collide with monster");
                     worldGrid.Move(currentPosition, nextPosition);
                     break;
@@ -146,6 +159,8 @@ namespace Snake
                 default:
                     break;
             }
+            //TODO: Move child hero follow player
+            //TODO: Pass direction of child to the next
 
             return true;
         }
