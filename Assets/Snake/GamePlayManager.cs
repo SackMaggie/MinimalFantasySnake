@@ -26,7 +26,7 @@ namespace Snake
         [Space]
         public SpawnableReference spawnableReference;
         public GameSetting gameSetting;
-        
+
 
         protected override void Start()
         {
@@ -39,7 +39,7 @@ namespace Snake
         public void InitilizeGame()
         {
             worldGrid.CreateGrid(worldGridSize);
-            
+
             SpawnPlayer();
             _SpawnUnitType(UnitType.HERO);
             _SpawnUnitType(UnitType.MONSTER);
@@ -58,6 +58,8 @@ namespace Snake
             {
                 SnakePlayer snakePlayer = Instantiate(spawnableReference.playerRef, worldGrid.transform, false);
                 snakePlayer.Position = worldGrid.GetBoardMiddle();
+                SnakeMovement snakeMovement = snakePlayer.GetComponent<SnakeMovement>();
+                snakeMovement.onMove = (movementContext) => OnPlayerMove(snakePlayer, movementContext);
                 return snakePlayer;
             }
         }
@@ -75,6 +77,23 @@ namespace Snake
             IUnit unit = SpawnUnitType(unitType);
             unit.Position = position;
             return unit;
+        }
+
+        /// <summary>
+        /// Check current position
+        /// Check out of bound
+        /// Check if collide with other stuff
+        /// 
+        /// </summary>
+        /// <param name="snakePlayer"></param>
+        /// <param name="movementContext"></param>
+        /// <returns>
+        /// true for successful move and false for any other reason
+        /// </returns>
+        /// <exception cref="NotImplementedException"></exception>
+        private bool OnPlayerMove(SnakePlayer snakePlayer, MovementContext movementContext)
+        {
+            throw new NotImplementedException();
         }
     }
 }

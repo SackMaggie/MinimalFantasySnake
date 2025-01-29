@@ -16,6 +16,8 @@ namespace Snake
         public PlayerInput playerInput;
         public Direction currentDirection;
 
+        public Func<MovementContext, bool> onMove;
+
         protected override void Start()
         {
             base.Start();
@@ -47,16 +49,24 @@ namespace Snake
             }
 
             static bool CheckInputValid(Vector2 vector2) => !(Mathf.Approximately(vector2.x, 0) && Mathf.Approximately(vector2.y, 0));
-        }
 
-        private void ProcessInput(Vector2 input)
-        {
-            Direction direction = ConvertToDirection(input);
-            Direction currentDirection = this.currentDirection;
-            if (currentDirection.IsOposite(direction))
-                throw new InvalidOperationException($"Can't go backward, from {currentDirection} to {direction}");
+            void ProcessInput(Vector2 input)
+            {
+                Direction direction = ConvertToDirection(input);
+                Direction currentDirection = this.currentDirection;
+                if (currentDirection.IsOposite(direction))
+                    throw new InvalidOperationException($"Can't go backward, from {currentDirection} to {direction}");
 
-            this.currentDirection = direction;
+                MovementContext movementContext = new MovementContext()
+                {
+                    newDirection = direction,
+                    oldDirection = currentDirection,
+                    rawInput = input,
+                };
+
+                if (onMove.Invoke(movementContext))
+                    this.currentDirection = direction;
+            }
         }
 
         private static Direction ConvertToDirection(Vector2 vector2)
@@ -89,6 +99,13 @@ namespace Snake
             /// Could avoid casting if use other type
             return ((sbyte)oldDirection + (sbyte)newDirection) == 0;
         }
+    }
+
+    public record MovementContext
+    {
+        public Direction newDirection;
+        public Direction oldDirection;
+        public Vector2 rawInput;
     }
 
     /// <summary>
