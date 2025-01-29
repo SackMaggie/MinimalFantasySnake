@@ -66,6 +66,7 @@ namespace Snake
         {
             GameObject gameObjectRef = spawnableReference.GetObjectFromType(unitType);
             GameObject gameObject = Instantiate(gameObjectRef, worldGrid.transform, false);
+            gameObject.transform.position = worldGrid.transform.position;
             return gameObject.GetComponent<IUnit>();
         }
 

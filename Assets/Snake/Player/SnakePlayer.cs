@@ -1,16 +1,14 @@
+using Snake.Unit;
 using UnityEngine;
 
 namespace Snake.Player
 {
     //TODO: Add movement control
-    public class SnakePlayer : CustomMonoBehaviour, Unit.IPlayer
+    public class SnakePlayer : UnitBase, Unit.IPlayer
     {
         public static SnakePlayer Instance;
 
-        public int Health { get; set; }
-        public int Attack { get; set; }
-        public int Defense { get; set; }
-        public Vector2Int Position { get; set; }
+
 
         protected override void Start()
         {
