@@ -16,7 +16,7 @@ namespace Snake.Unit
 
     public interface IHeros : IUnit
     {
-        
+
     }
 
     public interface IMonster : IUnit

@@ -96,6 +96,7 @@ namespace Snake
         {
             IUnit unit = SpawnUnitType(unitType);
             unit.Position = position;
+            unit.ApplyStats(gameSetting.GetStatsSetting(unitType));
             return unit;
         }
 
