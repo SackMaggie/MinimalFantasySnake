@@ -16,6 +16,10 @@ namespace Snake
         protected override void Start()
         {
             base.Start();
+            foreach (var item in gamePlayManager.GetAllUnit())
+            {
+                OnUnitSpawn(item);
+            }
             gamePlayManager.OnUnitSpawn.AddListener(OnUnitSpawn);
             gamePlayManager.OnUnitKill.AddListener(OnUnitKill);
         }

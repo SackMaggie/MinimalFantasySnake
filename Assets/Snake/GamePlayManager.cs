@@ -31,13 +31,21 @@ namespace Snake
         public SpawnableReference spawnableReference;
         public GameSetting gameSetting;
         public BattleManager battleManager;
-
+        private SnakePlayer snakePlayer;
         public UnityEvent<IUnit> OnUnitSpawn = new UnityEvent<IUnit>();
         public UnityEvent<IUnit> OnUnitKill = new UnityEvent<IUnit>();
         public UnityEvent<GameState> OnGameStateChange = new UnityEvent<GameState>();
-        public UnityEvent OnGameEnd = new UnityEvent();
-        public GameState gameState = GameState.None;
+        private GameState gameState = GameState.None;
 
+        public GameState GameState
+        {
+            get => gameState;
+            set
+            {
+                gameState = value;
+                OnGameStateChange.Invoke(value);
+            }
+        }
 
         protected override void Start()
         {
@@ -49,16 +57,16 @@ namespace Snake
 
         public void InitilizeGame()
         {
-            gameState = GameState.Initilizing;
+            GameState = GameState.Initilizing;
             worldGrid.CreateGrid(worldGridSize);
             battleManager = new BattleManager
             {
                 gamePlayManager = this
             };
-            SnakePlayer snakePlayer = SpawnPlayer();
+            snakePlayer = SpawnPlayer();
             _SpawnUnitType(UnitType.HERO);
             _SpawnUnitType(UnitType.MONSTER);
-            gameState = GameState.Playing;
+            GameState = GameState.Playing;
 
 
             void _SpawnUnitType(UnitType unitType)
@@ -96,6 +104,11 @@ namespace Snake
             Debug.Log($"OnUnitKilled {unit} {killer}");
             OnUnitKill.Invoke(unit);
 
+            if (snakePlayer.ChildHero.Count == 0)
+            {
+                GameState = GameState.GameEnded;
+            }
+
             IUnit unit1 = worldGrid.GetUnit(unit.Position);
             if (unit1 == unit)
                 worldGrid.Remove(unit.Position);
@@ -124,7 +137,7 @@ namespace Snake
 
         private bool CheckCanPlayerMove()
         {
-            switch (gameState)
+            switch (GameState)
             {
                 case GameState.Playing:
                     //todo add combat check if adding non instant combat
@@ -132,7 +145,7 @@ namespace Snake
 
                     return true;
                 default:
-                    throw new Exception($"Invalid GameState {gameState}");
+                    throw new Exception($"Invalid GameState {GameState}");
             }
         }
 
@@ -206,8 +219,7 @@ namespace Snake
                     if (playerUnit.ChildHero.Contains(hero))
                     {
                         Debug.LogError("Game End");
-                        OnGameEnd.Invoke();
-                        gameState = GameState.GameEnded;
+                        GameState = GameState.GameEnded;
                         return false;
                     }
                     //TODO: Check if that hero is our child for gameover
@@ -298,6 +310,14 @@ namespace Snake
             {
                 Debug.Log(stringBuilder.ToString());
             }
+        }
+
+        internal IUnit[] GetAllUnit()
+        {
+            IEnumerable<IUnit> query = from IUnit item in worldGrid.UnitGrid
+                                       where item != null
+                                       select item;
+            return query.ToArray();
         }
     }
 
