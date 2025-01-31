@@ -9,7 +9,7 @@ Fantasy Snake is a Snake game with Fantasy RPG mixed. The player controls a grow
     - [x] Press WASD on the keyboard to move in the up, left, right, and down directions.
     - [ ] Pressing the DPad on the gamepad
     - [x] The player cannot move in the opposite direction. If the player character is facing up, they can go left, up, or right, but not down.
-    - [ ] The Hero beside the front character will move to occupy the same space as the previous Hero.
+    - [x] The Hero beside the front character will move to occupy the same space as the previous Hero.
 - [x] Unlike Snake, there is no fixed interval for movement. This game uses a turn-based system, in which a turn is passed only when the player makes a move.
 - [ ] Every character (both Heroes and Monsters) has three stats: Health, Attack, Defense.
   - [ ] There is a UI showing its stats for each character.
@@ -17,14 +17,14 @@ Fantasy Snake is a Snake game with Fantasy RPG mixed. The player controls a grow
   - [ ] A collision with the Hero line will result in the game being over immediately.
   - [ ] Collide with collectable Hero will collect that hero. The collected hero will be at the end of the line. The front character will occupy the space of that hero. Also, spawn new heroes according to the chance configuration.
   - [ ] Collide with the Monster will result in battle.
-    - [ ] When a battle occurs, reduce health both Hero and Monster at the same time using this formula: Damage = (Attacker Attack - Defender Defense)
+    - [x] When a battle occurs, reduce health both Hero and Monster at the same time using this formula: Damage = (Attacker Attack - Defender Defense)
     - [ ] If the Health of the Monster is 0 or lower, remove that enemy from the game and spawn new Monsters according to the chance configuration.
     - [ ] If the Health of the Hero is 0 or lower, remove that hero from the game and move the rest of the line normally.
-- [ ] There is no win condition. The player can play this game endlessly.
+- [x] There is no win condition. The player can play this game endlessly.
 - [ ] At least these values must be able to be configured.
   - [x] Start number of entity spawn
-  - [ ] Min and max stats
-  - [ ] The chance of spawning (how many Heroes or Monsters will be spawned when removed)
+  - [x] Min and max stats
+  - [x] The chance of spawning (how many Heroes or Monsters will be spawned when removed)
 
 ### Extra Gameplay
 This section outlines additional gameplay requirements. These extra features
