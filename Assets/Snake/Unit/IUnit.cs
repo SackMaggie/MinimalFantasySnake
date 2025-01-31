@@ -11,6 +11,7 @@ namespace Snake.Unit
         int Defense { get; set; }
         Vector2Int Position { get; set; }
         Direction Direction { get; set; }
+        GameObject GameObject { get; }
     }
 
     public interface IHeros : IUnit
@@ -31,5 +32,6 @@ namespace Snake.Unit
     public interface IPlayer : IUnit
     {
         IList<IUnit> ChildHero { get; }
+        IUnit CurrentHero { get; set; }
     }
 }

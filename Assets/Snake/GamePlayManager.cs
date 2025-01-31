@@ -41,7 +41,6 @@ namespace Snake
             worldGrid.CreateGrid(worldGridSize);
 
             SnakePlayer snakePlayer = SpawnPlayer();
-            worldGrid.AddUnit(snakePlayer);
             _SpawnUnitType(UnitType.HERO);
             _SpawnUnitType(UnitType.MONSTER);
 
@@ -60,7 +59,11 @@ namespace Snake
             {
                 SnakePlayer snakePlayer = Instantiate(spawnableReference.playerRef, worldGrid.transform, false);
                 snakePlayer.transform.position = worldGrid.transform.position;
-                snakePlayer.Position = worldGrid.GetBoardMiddle();
+                Vector2Int spawnPosition = worldGrid.GetBoardMiddle();
+                IUnit firstChildHero = SpawnUnitType(UnitType.HERO, spawnPosition);
+                snakePlayer.ChildHero.Add(firstChildHero);
+                worldGrid.AddUnit(firstChildHero);
+                snakePlayer.Position = spawnPosition;
                 SnakeMovement snakeMovement = snakePlayer.GetComponent<SnakeMovement>();
                 snakeMovement.onMove = (movementContext) => OnPlayerMove(snakePlayer, movementContext);
 
@@ -118,8 +121,10 @@ namespace Snake
             IPlayer playerUnit = snakePlayer;
             Vector2Int currentPosition = snakePlayer.Position;
             IUnit unitOnPosition = worldGrid.GetUnit(currentPosition);
-            if (unitOnPosition == null || playerUnit != unitOnPosition)
-                throw new Exception($"Player is not on world grid");
+            if (unitOnPosition == null)
+                throw new Exception($"unit on the world grid is not exist {currentPosition}");
+            if (playerUnit.CurrentHero != unitOnPosition)
+                throw new Exception("current hero is not the same on world grid");
 
             playerUnit.Direction = movementContext.newDirection;
 

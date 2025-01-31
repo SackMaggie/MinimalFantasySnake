@@ -35,10 +35,11 @@ namespace Snake.World
                     {
                         units.Add(new TestUnit()
                         {
-                            Position = unit.Position,
-                            Attack = unit.Attack,
-                            Defense = unit.Defense,
-                            Health = unit.Health,
+                            position = unit.Position,
+                            attack = unit.Attack,
+                            defense = unit.Defense,
+                            health = unit.Health,
+                            gameObject = unit.GameObject
                         });
                     }
                 }
@@ -112,6 +113,14 @@ namespace Snake.World
 
         internal IUnit GetUnit(Vector2Int position) => UnitGrid[position.x, position.y];
 
+        /// <summary>
+        /// Use this function to move unit to empty position
+        /// Will throw an error if unit is not exist or the location is occupied
+        /// It is similar to <see cref="Swap(Vector2Int, Vector2Int)"/> but it has different intention
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <exception cref="Exception"></exception>
         internal void Move(Vector2Int from, Vector2Int to)
         {
             IUnit sourceUnit = UnitGrid[from.x, from.y] ?? throw new Exception($"No unit at position {from}");
@@ -130,24 +139,42 @@ namespace Snake.World
                 throw new Exception("Source not get replace with null");
         }
 
+        /// <summary>
+        /// Use this function to swap both unit position
+        /// Will throw an error if ther's no unit to swap
+        /// It is similar to <see cref="Move(Vector2Int, Vector2Int)"/> but it has different intention
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <exception cref="Exception"></exception>
+        internal void Swap(Vector2Int from, Vector2Int to)
+        {
+            IUnit sourceUnit = UnitGrid[from.x, from.y] ?? throw new Exception($"No unit at position {from}");
+            IUnit targetUnit = UnitGrid[to.x, to.y] ?? throw new Exception($"No unit at position {to}");
+
+            UnitGrid[to.x, to.y] = sourceUnit;
+            UnitGrid[from.x, from.y] = targetUnit;
+
+            if (UnitGrid[to.x, to.y] == null)
+                throw new Exception("Reference got lost while swap");
+            if (UnitGrid[from.x, from.y] != null)
+                throw new Exception("Source not get replace with null");
+        }
+
         internal void Remove(Vector2Int position)
         {
             UnitGrid[position.x, position.y] = null;
         }
 
         [Serializable]
-        private class TestUnit : IUnit
+        private class TestUnit
         {
-            [SerializeField] private int health;
-            [SerializeField] private int attack;
-            [SerializeField] private int defense;
-            [SerializeField] private Vector2Int position;
-            [SerializeField] private Direction direction;
-            public int Health { get => health; set => health = value; }
-            public int Attack { get => attack; set => attack = value; }
-            public int Defense { get => defense; set => defense = value; }
-            public Vector2Int Position { get => position; set => position = value; }
-            public Direction Direction { get => direction; set => direction = value; }
+            public int health;
+            public int attack;
+            public int defense;
+            public Vector2Int position;
+            public Direction direction;
+            public GameObject gameObject;
         }
     }
 }

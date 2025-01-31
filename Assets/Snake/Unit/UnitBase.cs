@@ -30,5 +30,6 @@ namespace Snake.Unit
         public virtual int Attack { get => attack; set => attack = value; }
         public virtual int Defense { get => defense; set => defense = value; }
         public Direction Direction { get => direction; set => direction = value; }
+        GameObject IUnit.GameObject => gameObject;
     }
 }

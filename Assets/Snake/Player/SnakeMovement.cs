@@ -100,9 +100,15 @@ namespace Snake.Movement
             return ((sbyte)oldDirection + (sbyte)newDirection) == 0;
         }
 
-        public static Vector2Int GetRelativePosition(this Direction direction, Vector2Int currentPosition)
+        public static bool GetOposite(this Direction oldDirection, Direction newDirection)
         {
-            const short distance = 1;
+            /// This only work in the scenario where we design each <see cref="Direction"/> pair with oposite value
+            /// Could avoid casting if use other type
+            return ((sbyte)oldDirection + (sbyte)newDirection) == 0;
+        }
+
+        public static Vector2Int GetRelativePosition(this Direction direction, Vector2Int currentPosition, short distance = 1)
+        {
             switch (direction)
             {
                 case Direction.UP:
