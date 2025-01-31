@@ -14,7 +14,7 @@ Fantasy Snake is a Snake game with Fantasy RPG mixed. The player controls a grow
 - [x] Every character (both Heroes and Monsters) has three stats: Health, Attack, Defense.
   - [x] There is a UI showing its stats for each character.
 - [ ] Collision occurs when player character move in a direction that will occupy the space of other entity (Heroes line, collectable Hero or Monster)
-  - [ ] A collision with the Hero line will result in the game being over immediately.
+  - [x] A collision with the Hero line will result in the game being over immediately.
   - [x] Collide with collectable Hero will collect that hero. The collected hero will be at the end of the line. The front character will occupy the space of that hero. Also, spawn new heroes according to the chance configuration.
   - [x] Collide with the Monster will result in battle.
     - [x] When a battle occurs, reduce health both Hero and Monster at the same time using this formula: Damage = (Attacker Attack - Defender Defense)

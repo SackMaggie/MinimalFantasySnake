@@ -16,7 +16,8 @@ namespace Snake.Movement
         public PlayerInput playerInput;
         public Direction currentDirection;
 
-        public Func<MovementContext, bool> onMove;
+        public Func<bool> CheckCanMoveFunc;
+        public Func<MovementContext, bool> RequestMovementFunc;
 
         protected override void Start()
         {
@@ -52,6 +53,11 @@ namespace Snake.Movement
 
             void ProcessInput(Vector2 input)
             {
+                if (!CheckCanMove())
+                {
+                    Debug.Log("Movement is not allowed");
+                    return;
+                }
                 Direction direction = ConvertToDirection(input);
                 Direction currentDirection = this.currentDirection;
                 if (currentDirection.IsOposite(direction))
@@ -64,7 +70,7 @@ namespace Snake.Movement
                     rawInput = input,
                 };
 
-                if (onMove.Invoke(movementContext))
+                if (RequestMovement(movementContext))
                     this.currentDirection = direction;
             }
         }
@@ -88,6 +94,32 @@ namespace Snake.Movement
             }
 
             throw new InvalidOperationException($"Unable to define direction from {vector2}");
+        }
+
+        private bool CheckCanMove()
+        {
+            try
+            {
+                return CheckCanMoveFunc.Invoke();
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e, this);
+                return false;
+            }
+        }
+
+        private bool RequestMovement(MovementContext movementContext)
+        {
+            try
+            {
+                return RequestMovementFunc.Invoke(movementContext);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e, this);
+                return false;
+            }
         }
     }
 

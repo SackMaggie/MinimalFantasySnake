@@ -33,6 +33,8 @@ namespace Snake
 
         public UnityEvent<IUnit> OnUnitSpawn = new UnityEvent<IUnit>();
         public UnityEvent<IUnit> OnUnitKill = new UnityEvent<IUnit>();
+        public UnityEvent OnGameEnd = new UnityEvent();
+        public GameState gameState = GameState.None;
 
 
         protected override void Start()
@@ -45,11 +47,12 @@ namespace Snake
 
         public void InitilizeGame()
         {
+            gameState = GameState.Initilizing;
             worldGrid.CreateGrid(worldGridSize);
-
             SnakePlayer snakePlayer = SpawnPlayer();
             _SpawnUnitType(UnitType.HERO);
             _SpawnUnitType(UnitType.MONSTER);
+            gameState = GameState.Playing;
 
 
             void _SpawnUnitType(UnitType unitType)
@@ -70,7 +73,8 @@ namespace Snake
                 snakePlayer.ChildHero.Add(firstChildHero);
                 snakePlayer.Position = spawnPosition;
                 SnakeMovement snakeMovement = snakePlayer.GetComponent<SnakeMovement>();
-                snakeMovement.onMove = (movementContext) => OnPlayerMove(snakePlayer, movementContext);
+                snakeMovement.CheckCanMoveFunc = CheckCanPlayerMove;
+                snakeMovement.RequestMovementFunc = (movementContext) => OnPlayerMove(snakePlayer, movementContext);
 
                 //temp just for clarification
                 snakePlayer.GetComponent<Renderer>().material.color = Color.blue;
@@ -109,6 +113,20 @@ namespace Snake
             for (int i = 0; i < spawnSetting.minSpawnCount; i++)
             {
                 SpawnUnitType(unitType, worldGrid.GetEmptyPosition());
+            }
+        }
+
+        private bool CheckCanPlayerMove()
+        {
+            switch (gameState)
+            {
+                case GameState.Playing:
+                    //todo add combat check if adding non instant combat
+
+
+                    return true;
+                default:
+                    throw new Exception($"Invalid GameState {gameState}");
             }
         }
 
@@ -154,6 +172,8 @@ namespace Snake
         /// <exception cref="NotImplementedException"></exception>
         private bool OnPlayerMove(SnakePlayer snakePlayer, MovementContext movementContext)
         {
+            if (!CheckCanPlayerMove())
+                return false;
             //validation
             if (snakePlayer == null)
                 throw new ArgumentNullException(nameof(snakePlayer));
@@ -177,6 +197,13 @@ namespace Snake
             {
                 case IHeros hero:
                     Debug.LogWarning("Collide with hero");
+                    if (playerUnit.ChildHero.Contains(hero))
+                    {
+                        Debug.LogError("Game End");
+                        OnGameEnd.Invoke();
+                        gameState = GameState.GameEnded;
+                        return false;
+                    }
                     //TODO: Check if that hero is our child for gameover
                     //TODO: Remove hero from the map
                     //TODO: Move the player into position
@@ -262,5 +289,13 @@ namespace Snake
                 Debug.Log(stringBuilder.ToString());
             }
         }
+    }
+
+    public enum GameState
+    {
+        None,
+        Initilizing,
+        Playing,
+        GameEnded,
     }
 }
