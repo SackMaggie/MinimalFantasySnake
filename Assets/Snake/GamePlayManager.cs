@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Snake
 {
@@ -53,8 +54,6 @@ namespace Snake
                 for (int i = 0; i < spawnSetting.maxSpawnCount; i++)
                 {
                     IUnit unit = SpawnUnitType(unitType, worldGrid.GetEmptyPosition());
-                    unit.OnKilled.AddListener(OnUnitKilled);
-                    worldGrid.AddUnit(unit);
                 }
             }
 
@@ -65,7 +64,6 @@ namespace Snake
                 Vector2Int spawnPosition = worldGrid.GetBoardMiddle();
                 IUnit firstChildHero = SpawnUnitType(UnitType.HERO, spawnPosition);
                 snakePlayer.ChildHero.Add(firstChildHero);
-                worldGrid.AddUnit(firstChildHero);
                 snakePlayer.Position = spawnPosition;
                 SnakeMovement snakeMovement = snakePlayer.GetComponent<SnakeMovement>();
                 snakeMovement.onMove = (movementContext) => OnPlayerMove(snakePlayer, movementContext);
@@ -88,6 +86,16 @@ namespace Snake
                 worldGrid.Remove(unit.Position);
             else
                 Debug.LogError("Requested Unit are not the same as unit in world grid");
+            UnitType unitType = unit switch
+            {
+                IMonster => UnitType.MONSTER,
+                IHeros => UnitType.HERO,
+                _ => throw new NotImplementedException(unit.GetType().ToString()),
+            };
+            GameSetting.SpawnSetting spawnSetting = gameSetting.GetSpawnSetting(unitType);
+            // spawn same unit type based on configured chance
+            if (Random.value <= spawnSetting.spawnChance)
+                SpawnUnitType(unitType, worldGrid.GetEmptyPosition());
         }
 
         private IUnit SpawnUnitType(UnitType unitType)
@@ -112,6 +120,8 @@ namespace Snake
             IUnit unit = SpawnUnitType(unitType);
             unit.Position = position;
             unit.ApplyStats(gameSetting.GetStatsSetting(unitType));
+            unit.OnKilled.AddListener(OnUnitKilled);
+            worldGrid.AddUnit(unit);
             return unit;
         }
 

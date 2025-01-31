@@ -15,11 +15,11 @@ Fantasy Snake is a Snake game with Fantasy RPG mixed. The player controls a grow
   - [ ] There is a UI showing its stats for each character.
 - [ ] Collision occurs when player character move in a direction that will occupy the space of other entity Heroes line, collectable Hero or Monster)
   - [ ] A collision with the Hero line will result in the game being over immediately.
-  - [ ] Collide with collectable Hero will collect that hero. The collected hero will be at the end of the line. The front character will occupy the space of that hero. Also, spawn new heroes according to the chance configuration.
-  - [ ] Collide with the Monster will result in battle.
+  - [x] Collide with collectable Hero will collect that hero. The collected hero will be at the end of the line. The front character will occupy the space of that hero. Also, spawn new heroes according to the chance configuration.
+  - [x] Collide with the Monster will result in battle.
     - [x] When a battle occurs, reduce health both Hero and Monster at the same time using this formula: Damage = (Attacker Attack - Defender Defense)
-    - [ ] If the Health of the Monster is 0 or lower, remove that enemy from the game and spawn new Monsters according to the chance configuration.
-    - [ ] If the Health of the Hero is 0 or lower, remove that hero from the game and move the rest of the line normally.
+    - [x] If the Health of the Monster is 0 or lower, remove that enemy from the game and spawn new Monsters according to the chance configuration.
+    - [x] If the Health of the Hero is 0 or lower, remove that hero from the game and move the rest of the line normally.
 - [x] There is no win condition. The player can play this game endlessly.
 - [ ] At least these values must be able to be configured.
   - [x] Start number of entity spawn
