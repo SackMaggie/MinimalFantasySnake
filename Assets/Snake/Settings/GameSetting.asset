@@ -15,15 +15,17 @@ MonoBehaviour:
   spawnSettings:
   - unitType: 0
     maxSpawnCount: 4
-    spawnChance: 1
+    minSpawnCount: 1
+    spawnChance: 0.6
   - unitType: 1
     maxSpawnCount: 5
-    spawnChance: 1
+    minSpawnCount: 1
+    spawnChance: 0.8
   heroStat:
     healthRange: {x: 2, y: 20}
     attackRange: {x: 1, y: 10}
-    defenseRange: {x: 2, y: 10}
+    defenseRange: {x: 2, y: 3}
   monsterStat:
     healthRange: {x: 2, y: 15}
-    attackRange: {x: 1, y: 10}
+    attackRange: {x: 3, y: 10}
     defenseRange: {x: 0, y: 5}

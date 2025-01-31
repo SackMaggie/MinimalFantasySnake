@@ -86,16 +86,25 @@ namespace Snake
                 worldGrid.Remove(unit.Position);
             else
                 Debug.LogError("Requested Unit are not the same as unit in world grid");
-            UnitType unitType = unit switch
-            {
-                IMonster => UnitType.MONSTER,
-                IHeros => UnitType.HERO,
-                _ => throw new NotImplementedException(unit.GetType().ToString()),
-            };
+            UnitType unitType = unit.GetUnitType();
             GameSetting.SpawnSetting spawnSetting = gameSetting.GetSpawnSetting(unitType);
             // spawn same unit type based on configured chance
             if (Random.value <= spawnSetting.spawnChance)
                 SpawnUnitType(unitType, worldGrid.GetEmptyPosition());
+
+            EnsureMinimumNumberOfUnitType(unitType);
+        }
+
+        private void EnsureMinimumNumberOfUnitType(UnitType unitType)
+        {
+            GameSetting.SpawnSetting spawnSetting = gameSetting.GetSpawnSetting(unitType);
+            IEnumerable<IUnit> query = from IUnit unit in worldGrid.UnitGrid
+                                       where unit.GetUnitType() == unitType
+                                       select unit;
+            for (int i = 0; i < spawnSetting.minSpawnCount; i++)
+            {
+                SpawnUnitType(unitType, worldGrid.GetEmptyPosition());
+            }
         }
 
         private IUnit SpawnUnitType(UnitType unitType)

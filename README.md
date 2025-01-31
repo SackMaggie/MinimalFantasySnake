@@ -59,3 +59,6 @@ During implementation of combat GDD does not specify about this following condit
   - Injured Solution: since combat already occur this make both hero and monster injured
     - Player can walk away by changing direction or re-initiate the fight by going to the same direction
   - Fight till death Solution: the battle happen in a loop treat it like a both monster and hero trade a hit untill one side is dead
+
+#### SpawningMechanic
+There's a chance that no monster will be spawned at all leaving the board completly empty, So I've added minimum number of unit type in the field

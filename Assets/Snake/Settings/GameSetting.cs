@@ -31,6 +31,7 @@ namespace Snake
         {
             public UnitType unitType;
             [Min(1)] public int maxSpawnCount;
+            [Min(0)] public int minSpawnCount;
             [Range(0, 1)] public float spawnChance;
         }
 

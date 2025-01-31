@@ -1,4 +1,7 @@
-﻿namespace Snake.Unit
+﻿using Snake.Player;
+using System;
+
+namespace Snake.Unit
 {
     public static class UnitExtension
     {
@@ -8,5 +11,12 @@
             unit.Attack = statsSetting.Attack;
             unit.Defense = statsSetting.Defense;
         }
+
+        public static UnitType GetUnitType(this IUnit unit) => unit switch
+        {
+            IMonster => UnitType.MONSTER,
+            IHeros => UnitType.HERO,
+            _ => throw new NotImplementedException(unit.GetType().ToString()),
+        };
     }
 }
