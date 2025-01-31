@@ -21,6 +21,7 @@ namespace Snake.Player
         GameObject IUnit.GameObject => gameObject;
 
         [SerializeField] private int childHeroCount;
+        [SerializeField] private List<GameObject> childHeroObject = new List<GameObject>();
 
         protected override void Start()
         {
@@ -33,6 +34,7 @@ namespace Snake.Player
             base.Update();
             //TODO: Remove this for debug
             childHeroCount = ChildHero.Count;
+            childHeroObject = ChildHero.Select(x => x.GameObject).ToList();
         }
 #endif
     }

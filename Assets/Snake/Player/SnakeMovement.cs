@@ -36,7 +36,7 @@ namespace Snake.Movement
         /// <param name="callbackContext"></param>
         public void Move(CallbackContext callbackContext)
         {
-            Debug.Log($"{callbackContext.ReadValue<Vector2>()} {callbackContext.phase}");
+            //Debug.Log($"{callbackContext.ReadValue<Vector2>()} {callbackContext.phase}");
             switch (callbackContext.phase)
             {
                 case InputActionPhase.Performed:

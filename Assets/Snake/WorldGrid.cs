@@ -123,20 +123,29 @@ namespace Snake.World
         /// <exception cref="Exception"></exception>
         internal void Move(Vector2Int from, Vector2Int to)
         {
-            IUnit sourceUnit = UnitGrid[from.x, from.y] ?? throw new Exception($"No unit at position {from}");
-            IUnit targetUnit = UnitGrid[to.x, to.y];
-            if (targetUnit != null)
-                throw new Exception($"Position is occupied {to} by {targetUnit}");
-            UnitGrid[to.x, to.y] = UnitGrid[from.x, from.y];
-            UnitGrid[from.x, from.y] = null;
+            try
+            {
+                if (from == to)
+                    throw new Exception($"same position {from} : {to} unable to move");
+                IUnit sourceUnit = UnitGrid[from.x, from.y] ?? throw new Exception($"No unit at position {from}");
+                IUnit targetUnit = UnitGrid[to.x, to.y];
+                if (targetUnit != null)
+                    throw new Exception($"Position is occupied {to} by {targetUnit}");
+                UnitGrid[to.x, to.y] = UnitGrid[from.x, from.y];
+                UnitGrid[from.x, from.y] = null;
 
-            if (UnitGrid[to.x, to.y] == null)
-                throw new Exception("Reference got lost while move");
+                if (UnitGrid[to.x, to.y] == null)
+                    throw new Exception("Reference got lost while move");
 
-            UnitGrid[to.x, to.y].Position = to;
+                UnitGrid[to.x, to.y].Position = to;
 
-            if (UnitGrid[from.x, from.y] != null)
-                throw new Exception("Source not get replace with null");
+                if (UnitGrid[from.x, from.y] != null)
+                    throw new Exception("Source not get replace with null");
+            }
+            catch (Exception e)
+            {
+                throw new Exception($"Error when Move is called {from}>>{to}", e);
+            }
         }
 
         /// <summary>
