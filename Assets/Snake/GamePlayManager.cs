@@ -34,6 +34,7 @@ namespace Snake
 
         public UnityEvent<IUnit> OnUnitSpawn = new UnityEvent<IUnit>();
         public UnityEvent<IUnit> OnUnitKill = new UnityEvent<IUnit>();
+        public UnityEvent<GameState> OnGameStateChange = new UnityEvent<GameState>();
         public UnityEvent OnGameEnd = new UnityEvent();
         public GameState gameState = GameState.None;
 
