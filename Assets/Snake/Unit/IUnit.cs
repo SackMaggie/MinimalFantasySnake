@@ -1,17 +1,19 @@
 using Snake.Movement;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Snake.Unit
 {
-    public interface IUnit
+    public interface IUnit : IUnitStat
     {
-        int Health { get; set; }
-        int Attack { get; set; }
-        int Defense { get; set; }
         Vector2Int Position { get; set; }
         Direction Direction { get; set; }
         GameObject GameObject { get; }
+
+        void KillUnit(IUnit killer);
+
+        UnityEvent<(IUnit unit, IUnit killer)> OnKilled { get; }
     }
 
     public interface IHeros : IUnit
@@ -33,5 +35,12 @@ namespace Snake.Unit
     {
         IList<IUnit> ChildHero { get; }
         IUnit CurrentHero { get; set; }
+    }
+
+    public interface IUnitStat
+    {
+        int Health { get; set; }
+        int Attack { get; set; }
+        int Defense { get; set; }
     }
 }

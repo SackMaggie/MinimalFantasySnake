@@ -51,3 +51,11 @@ are optional for evaluation.
   - [ ] Recovery item
   - [ ] Increase attack or defense
 - [ ] Adding Level system with progression
+
+### FeedBack
+#### Combat
+During implementation of combat GDD does not specify about this following conditions
+- Monster doesn't have enough attack value to kill hero and Hero doesn't have enough attack value too
+  - Injured Solution: since combat already occur this make both hero and monster injured
+    - Player can walk away by changing direction or re-initiate the fight by going to the same direction
+  - Fight till death Solution: the battle happen in a loop treat it like a both monster and hero trade a hit untill one side is dead

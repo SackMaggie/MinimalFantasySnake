@@ -1,4 +1,5 @@
-﻿using Snake.Movement;
+﻿using Snake.Battle;
+using Snake.Movement;
 using Snake.Player;
 using Snake.Unit;
 using Snake.World;
@@ -52,6 +53,7 @@ namespace Snake
                 for (int i = 0; i < spawnSetting.maxSpawnCount; i++)
                 {
                     IUnit unit = SpawnUnitType(unitType, worldGrid.GetEmptyPosition());
+                    unit.OnKilled.AddListener(OnUnitKilled);
                     worldGrid.AddUnit(unit);
                 }
             }
@@ -73,6 +75,19 @@ namespace Snake
 
                 return snakePlayer;
             }
+        }
+
+        private void OnUnitKilled((IUnit unit, IUnit killer) arg)
+        {
+            IUnit unit = arg.unit;
+            IUnit killer = arg.killer;
+            Debug.Log($"OnUnitKilled {unit} {killer}");
+
+            IUnit unit1 = worldGrid.GetUnit(unit.Position);
+            if (unit1 == unit)
+                worldGrid.Remove(unit.Position);
+            else
+                Debug.LogError("Requested Unit are not the same as unit in world grid");
         }
 
         private IUnit SpawnUnitType(UnitType unitType)
@@ -160,6 +175,7 @@ namespace Snake
                     //TODO: Move the player into position
                     //TODO: Remove monster from the map
                     Debug.LogWarning("Collide with monster");
+                    BattleManager.Battle(playerUnit, monster);
                     break;
                 case IPlayer player:
                     Debug.LogWarning("Collide with player");
@@ -176,50 +192,49 @@ namespace Snake
             MoveSnakePlayer(playerUnit, nextPosition);
 
             return true;
+        }
 
-            ///Move entire snake player and its tails (hero line)
-            void MoveSnakePlayer(IPlayer playerUnit, Vector2Int nextPosition)
+        private void MoveSnakePlayer(IPlayer playerUnit, Vector2Int nextPosition)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.AppendLine($"Move Snake from {playerUnit.Position} to {nextPosition} direction {playerUnit.Direction}");
+            try
             {
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.AppendLine($"Move Snake from {playerUnit.Position} to {nextPosition} direction {playerUnit.Direction}");
-                try
+                Vector2Int lastPosition = Vector2Int.zero;
+                for (int i = 0; i < playerUnit.ChildHero.Count; i++)
                 {
-                    Vector2Int lastPosition = Vector2Int.zero;
-                    for (int i = 0; i < playerUnit.ChildHero.Count; i++)
+                    Vector2Int targetPosition;
+                    IUnit lastUnit;
+                    IUnit currentUnit = playerUnit.ChildHero[i];
+                    Direction direction;
+                    if (i == 0)
                     {
-                        Vector2Int targetPosition;
-                        IUnit lastUnit;
-                        IUnit currentUnit = playerUnit.ChildHero[i];
-                        Direction direction;
-                        if (i == 0)
-                        {
-                            targetPosition = nextPosition;
-                            direction = playerUnit.Direction;
-                            lastPosition = currentUnit.Position;
-                            worldGrid.Move(currentUnit.Position, targetPosition);
-                        }
-                        else
-                        {
-                            lastUnit = playerUnit.ChildHero[i - 1];
-                            targetPosition = lastPosition;
-                            direction = lastUnit.Direction;
-                            stringBuilder.AppendLine($"lastUnit {lastUnit.Position} {lastUnit.Direction}" +
-                                $" self {currentUnit.Position} {currentUnit.Direction}" +
-                                $" target position {targetPosition}");
-                            lastPosition = currentUnit.Position;
-                            worldGrid.Move(currentUnit.Position, targetPosition);
-                            currentUnit.Direction = direction;
-                        }
+                        targetPosition = nextPosition;
+                        direction = playerUnit.Direction;
+                        lastPosition = currentUnit.Position;
+                        worldGrid.Move(currentUnit.Position, targetPosition);
+                    }
+                    else
+                    {
+                        lastUnit = playerUnit.ChildHero[i - 1];
+                        targetPosition = lastPosition;
+                        direction = lastUnit.Direction;
+                        stringBuilder.AppendLine($"lastUnit {lastUnit.Position} {lastUnit.Direction}" +
+                            $" self {currentUnit.Position} {currentUnit.Direction}" +
+                            $" target position {targetPosition}");
+                        lastPosition = currentUnit.Position;
+                        worldGrid.Move(currentUnit.Position, targetPosition);
+                        currentUnit.Direction = direction;
                     }
                 }
-                catch
-                {
-                    throw;
-                }
-                finally
-                {
-                    Debug.Log(stringBuilder.ToString());
-                }
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                Debug.Log(stringBuilder.ToString());
             }
         }
     }
