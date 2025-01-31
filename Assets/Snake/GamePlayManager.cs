@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using UnityEngine.Events;
 using Random = UnityEngine.Random;
 
 namespace Snake
@@ -29,6 +30,9 @@ namespace Snake
         [Space]
         public SpawnableReference spawnableReference;
         public GameSetting gameSetting;
+
+        public UnityEvent<IUnit> OnUnitSpawn = new UnityEvent<IUnit>();
+        public UnityEvent<IUnit> OnUnitKill = new UnityEvent<IUnit>();
 
 
         protected override void Start()
@@ -80,6 +84,7 @@ namespace Snake
             IUnit unit = arg.unit;
             IUnit killer = arg.killer;
             Debug.Log($"OnUnitKilled {unit} {killer}");
+            OnUnitKill.Invoke(unit);
 
             IUnit unit1 = worldGrid.GetUnit(unit.Position);
             if (unit1 == unit)
@@ -131,6 +136,7 @@ namespace Snake
             unit.ApplyStats(gameSetting.GetStatsSetting(unitType));
             unit.OnKilled.AddListener(OnUnitKilled);
             worldGrid.AddUnit(unit);
+            OnUnitSpawn.Invoke(unit);
             return unit;
         }
 

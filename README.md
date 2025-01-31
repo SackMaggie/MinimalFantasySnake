@@ -11,9 +11,9 @@ Fantasy Snake is a Snake game with Fantasy RPG mixed. The player controls a grow
     - [x] The player cannot move in the opposite direction. If the player character is facing up, they can go left, up, or right, but not down.
     - [x] The Hero beside the front character will move to occupy the same space as the previous Hero.
 - [x] Unlike Snake, there is no fixed interval for movement. This game uses a turn-based system, in which a turn is passed only when the player makes a move.
-- [ ] Every character (both Heroes and Monsters) has three stats: Health, Attack, Defense.
-  - [ ] There is a UI showing its stats for each character.
-- [ ] Collision occurs when player character move in a direction that will occupy the space of other entity Heroes line, collectable Hero or Monster)
+- [x] Every character (both Heroes and Monsters) has three stats: Health, Attack, Defense.
+  - [x] There is a UI showing its stats for each character.
+- [ ] Collision occurs when player character move in a direction that will occupy the space of other entity (Heroes line, collectable Hero or Monster)
   - [ ] A collision with the Hero line will result in the game being over immediately.
   - [x] Collide with collectable Hero will collect that hero. The collected hero will be at the end of the line. The front character will occupy the space of that hero. Also, spawn new heroes according to the chance configuration.
   - [x] Collide with the Monster will result in battle.
@@ -21,7 +21,7 @@ Fantasy Snake is a Snake game with Fantasy RPG mixed. The player controls a grow
     - [x] If the Health of the Monster is 0 or lower, remove that enemy from the game and spawn new Monsters according to the chance configuration.
     - [x] If the Health of the Hero is 0 or lower, remove that hero from the game and move the rest of the line normally.
 - [x] There is no win condition. The player can play this game endlessly.
-- [ ] At least these values must be able to be configured.
+- [x] At least these values must be able to be configured.
   - [x] Start number of entity spawn
   - [x] Min and max stats
   - [x] The chance of spawning (how many Heroes or Monsters will be spawned when removed)

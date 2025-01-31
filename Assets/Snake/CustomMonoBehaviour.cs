@@ -30,5 +30,10 @@ namespace Snake
         {
 
         }
+
+        protected virtual void OnDestroy()
+        {
+
+        }
     }
 }
