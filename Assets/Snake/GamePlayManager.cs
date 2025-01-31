@@ -30,6 +30,7 @@ namespace Snake
         [Space]
         public SpawnableReference spawnableReference;
         public GameSetting gameSetting;
+        public BattleManager battleManager;
 
         public UnityEvent<IUnit> OnUnitSpawn = new UnityEvent<IUnit>();
         public UnityEvent<IUnit> OnUnitKill = new UnityEvent<IUnit>();
@@ -49,6 +50,10 @@ namespace Snake
         {
             gameState = GameState.Initilizing;
             worldGrid.CreateGrid(worldGridSize);
+            battleManager = new BattleManager
+            {
+                gamePlayManager = this
+            };
             SnakePlayer snakePlayer = SpawnPlayer();
             _SpawnUnitType(UnitType.HERO);
             _SpawnUnitType(UnitType.MONSTER);
@@ -221,32 +226,37 @@ namespace Snake
                     hero.Direction = direction;
 
                     playerUnit.ChildHero.Add(hero);
-                    break;
+                    MoveSnakePlayer(playerUnit, nextPosition);
+                    return true;
                 case IMonster monster:
-                    //TODO: Combat
-                    //TODO: Move the player into position
-                    //TODO: Remove monster from the map
                     Debug.LogWarning("Collide with monster");
-                    BattleManager.Battle(playerUnit, monster);
-                    break;
+                    BattleResult battleResult = battleManager.Battle(playerUnit, monster);
+                    switch (battleResult)
+                    {
+                        case BattleResult.Victory:
+                            MoveSnakePlayer(playerUnit, nextPosition);
+                            return true;
+                        case BattleResult.Lose:
+                        case BattleResult.Injured:
+                            return false;
+                        case BattleResult.None:
+                            Debug.LogError($"Battle result in {battleResult} someting went wrong");
+                            return false;
+                        default:
+                            throw new NotImplementedException(battleResult.ToString());
+                    }
                 case IPlayer player:
-                    Debug.LogWarning("Collide with player");
-                    break;
+                    throw new InvalidOperationException($"Should not collide with {player}");
                 case null:
                     Debug.LogWarning("No Collision, just move");
-                    break;
+                    MoveSnakePlayer(playerUnit, nextPosition);
+                    return true;
                 default:
-                    break;
+                    throw new NotImplementedException(unit.GetType().ToString());
             }
-            //TODO: Move child hero follow player
-            //TODO: Pass direction of child to the next
-
-            MoveSnakePlayer(playerUnit, nextPosition);
-
-            return true;
         }
 
-        private void MoveSnakePlayer(IPlayer playerUnit, Vector2Int nextPosition)
+        internal void MoveSnakePlayer(IPlayer playerUnit, Vector2Int nextPosition)
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.AppendLine($"Move Snake from {playerUnit.Position} to {nextPosition} direction {playerUnit.Direction}");
@@ -262,7 +272,6 @@ namespace Snake
                     if (i == 0)
                     {
                         targetPosition = nextPosition;
-                        direction = playerUnit.Direction;
                         lastPosition = currentUnit.Position;
                         worldGrid.Move(currentUnit.Position, targetPosition);
                     }

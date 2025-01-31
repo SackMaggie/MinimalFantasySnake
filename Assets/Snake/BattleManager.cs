@@ -11,6 +11,8 @@ namespace Snake.Battle
     /// </summary>
     public class BattleManager
     {
+        public GamePlayManager gamePlayManager;
+
         /// <summary>
         /// Call this when battle occur, It is basically fight till death
         /// if the monster is still alive use the current hero to fight
@@ -19,7 +21,7 @@ namespace Snake.Battle
         /// </summary>
         /// <param name="player"></param>
         /// <param name="monster"></param>
-        public static void Battle(IPlayer player, IMonster monster)
+        public BattleResult Battle(IPlayer player, IMonster monster)
         {
             if (player is null)
                 throw new ArgumentNullException(nameof(player));
@@ -29,6 +31,8 @@ namespace Snake.Battle
 
             if (monster is IPlayer or IHeros)
                 throw new Exception("No combat between player or hero allowed, hero get recruited, player is just game over");
+            BattleResult battleResult = BattleResult.None;
+
             ///For fail safe in do-while loop
             int i = 0;
             int maxRetry = Mathf.Min(player.ChildHero.Count, 1) * 10;
@@ -41,7 +45,10 @@ namespace Snake.Battle
                 }
                 IUnit currentHero = player.CurrentHero;
                 if (currentHero == null)
+                {
+                    battleResult = BattleResult.Lose;
                     throw new Exception("No active hero, probally no Hero left");
+                }
                 int damageToMonster = CalulateDamage(currentHero, monster);
                 int damageToHero = CalulateDamage(monster, currentHero);
                 Debug.Log($"monster stats {monster.Health} {monster.Attack} {monster.Defense}");
@@ -53,17 +60,29 @@ namespace Snake.Battle
                 Debug.Log($"after monster.Health {monster.Health} currentHero.Health {currentHero.Health}");
 
                 if (monster.Health <= 0)
+                {
                     monster.KillUnit(currentHero);
+                    battleResult = BattleResult.Victory;
+                }
                 if (currentHero.Health <= 0)
                 {
                     // hero is dead swap the next hero to battle and restart the loop
+                    Vector2Int position = currentHero.Position;
                     player.ChildHero.Remove(currentHero);
                     currentHero.KillUnit(monster);
+
+                    gamePlayManager.MoveSnakePlayer(player, position);
+                    battleResult = BattleResult.Lose;
                     continue;
                 }
                 // break and exit the loop since battle is finished
                 break;
             } while (monster != null && monster.Health > 0);
+
+            if (monster != null && monster.Health > 0)
+                battleResult = BattleResult.Injured;
+
+            return battleResult;
         }
 
         private static int CalulateDamage(IUnit attacker, IUnit defender)
@@ -73,9 +92,17 @@ namespace Snake.Battle
             //damage output should not be negative
             if (attacker.Attack < 0)
                 throw new ArgumentException($"Unit have negative attack");
-            if (defender.Defense < 0)
-                throw new ArgumentException($"Unit have negative defense");
-            return Mathf.Max(attacker.Attack - defender.Defense, 0);
+            return defender.Defense < 0
+                ? throw new ArgumentException($"Unit have negative defense")
+                : Mathf.Max(attacker.Attack - defender.Defense, 0);
         }
+    }
+
+    public enum BattleResult
+    {
+        None,
+        Lose,
+        Victory,
+        Injured,
     }
 }
