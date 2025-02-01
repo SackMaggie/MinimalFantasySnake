@@ -53,30 +53,41 @@ namespace Snake.Movement
 
             void ProcessInput(Vector2 input)
             {
-                if (!CheckCanMove())
+                try
                 {
-                    Debug.Log("Movement is not allowed");
-                    return;
+                    if (!CheckCanMove())
+                    {
+                        Debug.Log("Movement is not allowed");
+                        return;
+                    }
+                    Direction direction = ConvertToDirection(input);
+                    Direction currentDirection = this.currentDirection;
+                    if (currentDirection.IsOposite(direction))
+                        throw new InvalidOperationException($"Can't go backward, from {currentDirection} to {direction}");
+
+                    MovementContext movementContext = new MovementContext()
+                    {
+                        newDirection = direction,
+                        oldDirection = currentDirection,
+                        rawInput = input,
+                    };
+
+                    if (RequestMovement(movementContext))
+                        this.currentDirection = direction;
                 }
-                Direction direction = ConvertToDirection(input);
-                Direction currentDirection = this.currentDirection;
-                if (currentDirection.IsOposite(direction))
-                    throw new InvalidOperationException($"Can't go backward, from {currentDirection} to {direction}");
-
-                MovementContext movementContext = new MovementContext()
+                catch (Exception e)
                 {
-                    newDirection = direction,
-                    oldDirection = currentDirection,
-                    rawInput = input,
-                };
-
-                if (RequestMovement(movementContext))
-                    this.currentDirection = direction;
+                    Debug.LogException(e);
+                }
             }
         }
 
         private static Direction ConvertToDirection(Vector2 vector2)
         {
+            // there's a problem when two keys is pressed at the same time such as W,D key we will get both x and y as 0.71
+            // which mean it will go up and right ?
+            // as mentioned above two key is pressed, let's just not move?
+
             switch (vector2.y)
             {
                 case > 0:

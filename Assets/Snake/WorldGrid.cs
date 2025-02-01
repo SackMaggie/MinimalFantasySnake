@@ -1,5 +1,4 @@
-﻿
-using Snake.Movement;
+﻿using Snake.Movement;
 using Snake.Unit;
 using System;
 using System.Collections.Generic;
@@ -20,12 +19,12 @@ namespace Snake.World
             base.Start();
         }
 
+#if UNITY_EDITOR
         protected override void Update()
         {
             base.Update();
 
             //TODO: Remove this, for debugging only
-#if UNITY_EDITOR
             if (UnitGrid != null)
             {
                 units.Clear();

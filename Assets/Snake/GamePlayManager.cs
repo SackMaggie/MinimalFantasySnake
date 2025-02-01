@@ -15,16 +15,6 @@ namespace Snake
 {
     public class GamePlayManager : CustomMonoBehaviour
     {
-        ///TODO: Create A UI
-        ///TODO: Make a map grid size of 16x16 <see cref="World.WorldGrid"/>
-        ///TODO: Make a unit
-        ///Hero <see cref="Snake.Unit.IHeros"/>
-        ///Player <see cref="Snake.Unit.IPlayer"/> <see cref="Player.SnakePlayer"/>
-        ///Monster <see cref="Snake.Unit.IMonster"/>
-        ///TODO: Turn based control
-        ///TODO: Collision Combat
-
-
         public WorldGrid worldGrid;
         private Vector2Int worldGridSize = new Vector2Int(16, 16);
         [Space]
@@ -209,6 +199,7 @@ namespace Snake
         {
             if (!CheckCanPlayerMove())
                 return false;
+            Debug.Log(movementContext.rawInput);
             //validation
             if (snakePlayer == null)
                 throw new ArgumentNullException(nameof(snakePlayer));
@@ -238,11 +229,6 @@ namespace Snake
                         GameState = GameState.GameEnded;
                         return false;
                     }
-                    //TODO: Check if that hero is our child for gameover
-                    //TODO: Remove hero from the map
-                    //TODO: Move the player into position
-                    //TODO: Add hero as a player child
-                    //TODO: Add hero back to the map
                     IUnit lastHeroUnit = playerUnit.ChildHero.LastOrDefault();
 
                     //Use direction from last unit or player
