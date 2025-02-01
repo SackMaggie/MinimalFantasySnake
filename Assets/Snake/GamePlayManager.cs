@@ -243,7 +243,12 @@ namespace Snake
             //process movementContext
             Vector2Int nextPosition = movementContext.newDirection.GetRelativePosition(currentPosition);
             IUnit unit = worldGrid.GetUnit(nextPosition);
-            switch (unit)
+            return OnUnitCollision(playerUnit, nextPosition, unit);
+        }
+
+        private bool OnUnitCollision(IPlayer playerUnit, Vector2Int nextPosition, IUnit collisionUnit)
+        {
+            switch (collisionUnit)
             {
                 case IHeros hero:
                     Debug.LogWarning("Collide with hero");
@@ -290,6 +295,19 @@ namespace Snake
                     item.OnPickUp(playerUnit);
                     item.IsDead = true;
                     item.KillUnit(playerUnit);
+
+                    IUnit currentHero = playerUnit.CurrentHero;
+                    if (currentHero.Health <= 0)
+                    {
+                        // hero is dead swap the next hero to battle and restart the loop
+                        Vector2Int position = currentHero.Position;
+                        playerUnit.ChildHero.Remove(currentHero);
+                        currentHero.IsDead = true;
+                        currentHero.KillUnit(item);
+
+                        if (playerUnit.ChildHero.Count > 0)
+                            MoveSnakePlayer(playerUnit, position);
+                    }
                     MoveSnakePlayer(playerUnit, nextPosition);
                     return true;
                 case null:
@@ -297,7 +315,7 @@ namespace Snake
                     MoveSnakePlayer(playerUnit, nextPosition);
                     return true;
                 default:
-                    throw new NotImplementedException(unit.GetType().ToString());
+                    throw new NotImplementedException(collisionUnit.GetType().ToString());
             }
         }
 
