@@ -36,12 +36,14 @@ namespace Snake
         public UnityEvent<IUnit> OnUnitKill = new UnityEvent<IUnit>();
         public UnityEvent<GameState> OnGameStateChange = new UnityEvent<GameState>();
         private GameState gameState = GameState.None;
+        public int CurrentUnitId { get; private set; } = 1;
 
         public GameState GameState
         {
             get => gameState;
             set
             {
+                Debug.Log($"GameState {value}");
                 gameState = value;
                 OnGameStateChange.Invoke(value);
             }
@@ -49,9 +51,12 @@ namespace Snake
 
         public void InitilizeGame()
         {
+            if (GameState == GameState.GameEnded)
+                GameState = GameState.CleanUp;
             GameState = GameState.Initilizing;
             foreach (IUnit item in GetAllUnit())
             {
+                item.OnKilled.RemoveListener(OnUnitKilled);
                 if (item.GameObject != null)
                     Destroy(item.GameObject);
             }
@@ -61,7 +66,7 @@ namespace Snake
                 gamePlayManager = this
             };
             if (snakePlayer != null)
-                snakePlayer.KillUnit(null);
+                Destroy(snakePlayer.gameObject);
             snakePlayer = SpawnPlayer();
             _SpawnUnitType(UnitType.HERO);
             _SpawnUnitType(UnitType.MONSTER);
@@ -96,6 +101,9 @@ namespace Snake
         {
             IUnit unit = arg.unit;
             IUnit killer = arg.killer;
+            //Only in play state
+            if (GameState != GameState.Playing)
+                return;
             Debug.Log($"OnUnitKilled {unit} {killer}");
             OnUnitKill.Invoke(unit);
 
@@ -105,10 +113,13 @@ namespace Snake
             }
 
             IUnit unit1 = worldGrid.GetUnit(unit.Position);
-            if (unit1 == unit)
-                worldGrid.Remove(unit.Position);
-            else
-                Debug.LogError("Requested Unit are not the same as unit in world grid");
+            if (unit1 != null)
+            {
+                if (unit1 == unit)
+                    worldGrid.Remove(unit.Position);
+                else
+                    Debug.LogError($"Requested Unit are not the same as unit in world grid, hash {unit.GetHashCode()} and {unit1.GetHashCode()}");
+            }
             UnitType unitType = unit.GetUnitType();
             GameSetting.SpawnSetting spawnSetting = gameSetting.GetSpawnSetting(unitType);
             // spawn same unit type based on configured chance
@@ -163,7 +174,9 @@ namespace Snake
 
         private IUnit SpawnUnitType(UnitType unitType, Vector2Int position)
         {
+            Debug.Log($"Spawn {unitType} at {position}");
             IUnit unit = SpawnUnitType(unitType);
+            unit.UnitId = CurrentUnitId++;
             unit.Position = position;
             unit.ApplyStats(gameSetting.GetStatsSetting(unitType));
             unit.OnKilled.AddListener(OnUnitKilled);
@@ -324,5 +337,6 @@ namespace Snake
         Initilizing,
         Playing,
         GameEnded,
+        CleanUp,
     }
 }

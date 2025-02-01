@@ -16,12 +16,26 @@ namespace Snake
         protected override void Start()
         {
             base.Start();
-            foreach (var item in gamePlayManager.GetAllUnit())
-            {
-                OnUnitSpawn(item);
-            }
+            CreateUiForEachUnit();
+            gamePlayManager.OnGameStateChange.AddListener(OnGameStateChange);
             gamePlayManager.OnUnitSpawn.AddListener(OnUnitSpawn);
             gamePlayManager.OnUnitKill.AddListener(OnUnitKill);
+        }
+
+        private void OnGameStateChange(GameState gameState)
+        {
+            switch (gameState)
+            {
+                case GameState.CleanUp:
+                    foreach (KeyValuePair<IUnit, UnitStatsDisplay> item in unitStatsDict)
+                    {
+                        if (item.Value == null)
+                            continue;
+                        Destroy(item.Value.gameObject);
+                    }
+                    unitStatsDict.Clear();
+                    break;
+            }
         }
 
         protected override void OnDestroy()
@@ -29,6 +43,12 @@ namespace Snake
             base.OnDestroy();
             gamePlayManager.OnUnitSpawn.RemoveListener(OnUnitSpawn);
             gamePlayManager.OnUnitKill.RemoveListener(OnUnitKill);
+        }
+
+        private void CreateUiForEachUnit()
+        {
+            foreach (IUnit item in gamePlayManager.GetAllUnit())
+                OnUnitSpawn(item);
         }
 
         private void OnUnitKill(IUnit unit)

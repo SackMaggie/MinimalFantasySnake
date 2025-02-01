@@ -9,6 +9,7 @@ namespace Snake.Unit
     /// </summary>
     public abstract class UnitBase : CustomMonoBehaviour, IUnit
     {
+        [SerializeField] private int unitId;
         [SerializeField] private Vector2Int position;
         [SerializeField] private int health;
         [SerializeField] private int attack;
@@ -16,6 +17,7 @@ namespace Snake.Unit
         [SerializeField] private Direction direction;
 
         private UnityEvent<(IUnit unit, IUnit killer)> onKilled = new UnityEvent<(IUnit unit, IUnit killer)>();
+        protected IUnit killer = null;
 
         public virtual Vector2Int Position
         {
@@ -28,6 +30,7 @@ namespace Snake.Unit
                 transform.position = new Vector3(position.x, transform.position.y, position.y);
             }
         }
+        public virtual int UnitId { get => unitId; set => unitId = value; }
         public virtual int Health { get => health; set => health = value; }
         public virtual int Attack { get => attack; set => attack = value; }
         public virtual int Defense { get => defense; set => defense = value; }
@@ -39,10 +42,15 @@ namespace Snake.Unit
         public virtual void KillUnit(IUnit killer)
         {
             IUnit unit = this;
+            this.killer = killer;
             GameObject gameObject = unit.GameObject;
-            Debug.LogWarning($"Kill unit {name} health={Health}", gameObject);
-            OnKilled.Invoke((this, killer));
             UnityEngine.GameObject.Destroy(gameObject);
+        }
+
+        protected override void OnDestroy()
+        {
+            OnKilled.Invoke((this, killer));
+            base.OnDestroy();
         }
     }
 }

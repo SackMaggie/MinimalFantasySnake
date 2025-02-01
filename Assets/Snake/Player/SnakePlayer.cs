@@ -81,11 +81,16 @@ namespace Snake.Player
             childHeroCount = ChildHero.Count;
             childHeroObject = ChildHero.Select(x => x.GameObject).ToList();
         }
-
-        public void KillUnit()
-        {
-            throw new Exception("The player should not get killed, try kill the hero line to trigger game over instead");
-        }
 #endif
+
+        public override void KillUnit(IUnit killer)
+        {
+            //kill active hero
+            CurrentHero?.KillUnit(killer);
+
+            //kill parent if no child
+            if (ChildHero.Count <= 0)
+                base.KillUnit(killer);
+        }
     }
 }

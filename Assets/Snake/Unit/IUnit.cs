@@ -7,6 +7,7 @@ namespace Snake.Unit
 {
     public interface IUnit : IUnitStat
     {
+        int UnitId { get; set; }
         Vector2Int Position { get; set; }
         Direction Direction { get; set; }
         GameObject GameObject { get; }
