@@ -197,7 +197,7 @@ namespace Snake
             unit.Position = position;
             unit.Direction = GetRandomDirection();
             unit.UnitClass = GetRandomUnitClass();
-            unit.ApplyStats(gameSetting.GetStatsSetting(unitType));
+            unit.ApplyStats(gameSetting.GetStatsSetting(unitType, unit.UnitClass));
             unit.OnKilled.AddListener(OnUnitKilled);
             worldGrid.AddUnit(unit);
             OnUnitSpawn.Invoke(unit);
