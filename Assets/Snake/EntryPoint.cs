@@ -71,24 +71,31 @@ namespace Snake
         {
             if (this == null)
                 return;
-            switch (gameState)
+            try
             {
-                case GameState.None:
-                    break;
-                case GameState.Initilizing:
-                    DestroyGameMenu();
-                    break;
-                case GameState.Playing:
-                    SnakePlayer snakePlayer = gamePlayManager.SnakePlayer;
-                    snakeChildObserver.Init(snakePlayer.ChildHero as ObservableCollection<IUnit>);
-                    break;
-                case GameState.GameEnded:
-                    CreateGameMenu();
-                    if (uiInput != null)
-                        Destroy(uiInput);
-                    break;
-                default:
-                    break;
+                switch (gameState)
+                {
+                    case GameState.None:
+                        break;
+                    case GameState.Initilizing:
+                        DestroyGameMenu();
+                        break;
+                    case GameState.Playing:
+                        SnakePlayer snakePlayer = gamePlayManager.SnakePlayer;
+                        snakeChildObserver.Init(snakePlayer.ChildHero as ObservableCollection<IUnit>);
+                        break;
+                    case GameState.GameEnded:
+                        CreateGameMenu();
+                        if (uiInput != null)
+                            Destroy(uiInput);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
             }
         }
     }

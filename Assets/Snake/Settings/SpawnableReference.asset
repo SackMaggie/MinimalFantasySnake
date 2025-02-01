@@ -17,4 +17,6 @@ MonoBehaviour:
     gameObject: {fileID: 2421636966227429712, guid: e227fdf677487824c886dd6862dd4f3a, type: 3}
   - unitType: 1
     gameObject: {fileID: 2464715306523767434, guid: 795647c807188744898b2ea85b997184, type: 3}
+  - unitType: 3
+    gameObject: {fileID: 4638699270018875057, guid: 68e6ca0b12857f8429ccd94247618fc1, type: 3}
   playerRef: {fileID: 3605187811216981234, guid: e374af736fd3ddf429c686b88e0df65a, type: 3}

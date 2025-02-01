@@ -65,6 +65,7 @@ namespace Snake
             _SpawnUnitType(UnitType.HERO);
             _SpawnUnitType(UnitType.MONSTER);
             _SpawnUnitType(UnitType.ITEM);
+            _SpawnUnitType(UnitType.OBSTACLE);
             GameState = GameState.Playing;
 
 
@@ -108,14 +109,13 @@ namespace Snake
                 GameState = GameState.GameEnded;
             }
 
-            IUnit unit1 = worldGrid.GetUnit(unit.Position);
-            if (unit1 != null)
+            if (unit is IUnitObstacle obstacle)
             {
-                if (unit1 == unit)
-                    worldGrid.Remove(unit.Position);
-                else
-                    Debug.LogError($"Requested Unit are not the same as unit in world grid, hash {unit.GetHashCode()} and {unit1.GetHashCode()}");
+                // an Obstacle is a unit cover multiple spots
+                foreach (Vector2Int item in obstacle.SubPosition)
+                    RemoveUnitAtPosition(unit, item);
             }
+            RemoveUnitAtPosition(unit, unit.Position);
             UnitType unitType = unit.GetUnitType();
             GameSetting.SpawnSetting spawnSetting = gameSetting.GetSpawnSetting(unitType);
             // spawn same unit type based on configured chance
@@ -123,6 +123,18 @@ namespace Snake
                 SpawnUnitType(unitType, worldGrid.GetEmptyPosition());
 
             EnsureMinimumNumberOfUnitType(unitType);
+
+            void RemoveUnitAtPosition(IUnit unit, Vector2Int position)
+            {
+                IUnit unit1 = worldGrid.GetUnit(position);
+                if (unit1 != null)
+                {
+                    if (unit1 == unit)
+                        worldGrid.Remove(unit.Position);
+                    else
+                        Debug.LogError($"Requested Unit are not the same as unit in world grid, hash {unit.GetHashCode()} and {unit1.GetHashCode()}");
+                }
+            }
         }
 
         private void EnsureMinimumNumberOfUnitType(UnitType unitType)
@@ -160,13 +172,14 @@ namespace Snake
             {
                 case UnitType.HERO:
                 case UnitType.MONSTER:
+                case UnitType.OBSTACLE:
                     gameObjectRef = spawnableReference.GetObjectFromType(unitType);
                     newGameObject = Instantiate(gameObjectRef, worldGrid.transform, false);
                     newGameObject.transform.position = worldGrid.transform.position;
                     unit = newGameObject.GetComponent<IUnit>();
                     break;
                 case UnitType.ITEM:
-                    GameSetting.ItemBinding itemBinding = gameSetting.GetItemRandomly();
+                    GameSetting.ItemBinding itemBinding = gameSetting.GetRandomItem();
                     gameObjectRef = itemBinding.objectBinding;
                     newGameObject = Instantiate(gameObjectRef, worldGrid.transform, false);
                     newGameObject.transform.position = worldGrid.transform.position;
@@ -180,11 +193,12 @@ namespace Snake
             }
 
             //temp just for clarification
-            newGameObject.GetComponent<Renderer>().material.color = unitType switch
+            newGameObject.GetComponentInChildren<Renderer>().material.color = unitType switch
             {
                 UnitType.MONSTER => Color.red,
                 UnitType.HERO => Color.green,
                 UnitType.ITEM => Color.yellow,
+                UnitType.OBSTACLE => Color.black,
                 _ => throw new NotImplementedException(unitType.ToString()),
             };
 
@@ -202,6 +216,8 @@ namespace Snake
             unit.ApplyStats(gameSetting.GetStatsSetting(unitType, unit.UnitClass));
             unit.OnKilled.AddListener(OnUnitKilled);
             worldGrid.AddUnit(unit);
+            if (unit is IUnitObstacle obstacle)
+                ApplyObstacleSetting(obstacle);
             OnUnitSpawn.Invoke(unit);
             return unit;
 
@@ -219,6 +235,99 @@ namespace Snake
                 UnitClassEnum[] unitClasses = Enum.GetValues(typeof(UnitClassEnum)).Cast<UnitClassEnum>().Where(x => x != UnitClassEnum.None).ToArray();
 
                 return unitClasses[Random.Range(0, unitClasses.Length)];
+            }
+
+            void ApplyObstacleSetting(IUnitObstacle obstacle)
+            {
+                Direction[] horizontals = new Direction[] { Direction.LEFT, Direction.RIGHT };
+                Direction[] verticles = new Direction[] { Direction.UP, Direction.DOWN };
+
+                Vector2Int size = Vector2Int.one;
+                bool isFitToGrid = true;
+                ///For fail safe in do-while loop
+                int k = 0;
+                int maxRetry = 20;
+                Direction horizontalDirection = Direction.LEFT;
+                Direction verticleDirection = Direction.UP;
+                do
+                {
+                    k++;
+                    if (k > maxRetry)
+                        break;
+                    size = gameSetting.GetRandomObstaclesSize();
+                    horizontalDirection = horizontals[Random.Range(0, horizontals.Length)];
+                    verticleDirection = verticles[Random.Range(0, horizontals.Length)];
+                    //TestDirection(position, size.x, ref isFitToGrid, horizontalDirection);
+                    //TestDirection(position, size.y, ref isFitToGrid, verticleDirection);
+                    TestDirection(position, ref size, ref isFitToGrid, horizontalDirection, verticleDirection);
+                } while (!isFitToGrid);
+                if (!isFitToGrid)
+                {
+                    size = Vector2Int.one;
+                    obstacle.SubPosition.Clear();
+                }
+                obstacle.HorizontalDirection = horizontalDirection;
+                obstacle.VerticleDirection = verticleDirection;
+                obstacle.Size = size;
+                foreach (Vector2Int item in obstacle.SubPosition)
+                    worldGrid.AddUnit(obstacle, item);
+
+                void TestDirection(Vector2Int position, ref Vector2Int sizeS, ref bool isFitToGrid, Direction direction, Direction direction2)
+                {
+                    try
+                    {
+                        for (int x = 0; x < sizeS.x; x++)
+                        {
+                            for (int y = 0; y < sizeS.y; y++)
+                            {
+                                Vector2Int relativeX = direction.GetRelativePosition(position, x);
+                                Vector2Int relativePos = direction2.GetRelativePosition(relativeX, y);
+                                if (relativePos == position)
+                                    continue;
+
+                                IUnit unit1 = worldGrid.GetUnit(relativePos);
+                                if (unit1 != null)
+                                {
+                                    Debug.Log($"occupied {relativePos} by {unit1}");
+                                    isFitToGrid = false;
+                                    break;
+                                }
+                                obstacle.SubPosition.Add(relativePos);
+                            }
+                            if (!isFitToGrid)
+                                break;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.Log(e);
+                        isFitToGrid = false;
+                    }
+                }
+
+                void TestDirection2(Vector2Int position, int size, ref bool isFitToGrid, Direction direction)
+                {
+                    try
+                    {
+                        for (int i = 1; i < size; i++)
+                        {
+                            Vector2Int relativePos = direction.GetRelativePosition(position, i);
+                            IUnit unit1 = worldGrid.GetUnit(relativePos);
+                            if (unit1 != null)
+                            {
+                                Debug.Log($"occupied {relativePos} by {unit1}");
+                                isFitToGrid = false;
+                                break;
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.Log(e);
+                        isFitToGrid = false;
+                    }
+                }
+
             }
         }
 
@@ -295,24 +404,44 @@ namespace Snake
                 case IPlayer player:
                     throw new InvalidOperationException($"Should not collide with {player}");
                 case IItem item:
-                    item.OnPickUp(playerUnit);
-                    item.IsDead = true;
-                    item.KillUnit(playerUnit);
-
-                    IUnit currentHero = playerUnit.CurrentHero;
-                    if (currentHero.Health <= 0)
                     {
-                        // hero is dead swap the next hero to battle and restart the loop
-                        Vector2Int position = currentHero.Position;
-                        playerUnit.ChildHero.Remove(currentHero);
-                        currentHero.IsDead = true;
-                        currentHero.KillUnit(item);
+                        item.OnPickUp(playerUnit);
+                        item.IsDead = true;
+                        item.KillUnit(playerUnit);
 
-                        if (playerUnit.ChildHero.Count > 0)
-                            MoveSnakePlayer(playerUnit, position);
+                        IUnit currentHero = playerUnit.CurrentHero;
+                        if (currentHero.Health <= 0)
+                        {
+                            // hero is dead swap the next hero to battle and restart the loop
+                            Vector2Int position = currentHero.Position;
+                            playerUnit.ChildHero.Remove(currentHero);
+                            currentHero.IsDead = true;
+                            currentHero.KillUnit(item);
+
+                            if (playerUnit.ChildHero.Count > 0)
+                                MoveSnakePlayer(playerUnit, position);
+                        }
+                        MoveSnakePlayer(playerUnit, nextPosition);
+                        return true;
                     }
-                    MoveSnakePlayer(playerUnit, nextPosition);
-                    return true;
+                case IUnitObstacle unitObstacle:
+                    {
+                        IUnit currentHero = playerUnit.CurrentHero;
+                        currentHero.Health = 0;
+                        if (currentHero.Health <= 0)
+                        {
+                            // hero is dead swap the next hero to battle and restart the loop
+                            Vector2Int position = currentHero.Position;
+                            playerUnit.ChildHero.Remove(currentHero);
+                            currentHero.IsDead = true;
+                            currentHero.KillUnit(unitObstacle);
+
+                            if (playerUnit.ChildHero.Count > 0)
+                                MoveSnakePlayer(playerUnit, position);
+                        }
+                        MoveSnakePlayer(playerUnit, nextPosition);
+                        return true;
+                    }
                 case null:
                     Debug.LogWarning("No Collision, just move");
                     MoveSnakePlayer(playerUnit, nextPosition);

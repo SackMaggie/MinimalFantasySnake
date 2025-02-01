@@ -94,6 +94,11 @@ namespace Snake.World
         internal void AddUnit(IUnit unit)
         {
             Vector2Int position = unit.Position;
+            AddUnit(unit, position);
+        }
+
+        internal void AddUnit(IUnit unit, Vector2Int position)
+        {
             if (UnitGrid[position.x, position.y] != null)
                 throw new Exception($"This position is already occupied {position}");
             UnitGrid[position.x, position.y] = unit;

@@ -46,4 +46,12 @@ namespace Snake.Unit
         int Defense { get; set; }
         UnitClassEnum UnitClass { get; set; }
     }
+
+    public interface IUnitObstacle : IUnit
+    {
+        Vector2Int Size { get; set; }
+        Direction HorizontalDirection { get; set; }
+        Direction VerticleDirection { get; set; }
+        IList<Vector2Int> SubPosition { get; }
+    }
 }

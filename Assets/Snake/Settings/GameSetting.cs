@@ -16,8 +16,16 @@ namespace Snake
         [SerializeField] private List<StatsSetting> monsterStats;
         [SerializeField] private Vector2Int boardSize = new Vector2Int(16, 16);
         [SerializeField] private List<ItemBinding> spawnableItems;
+        [SerializeField] private List<Vector2Int> obstacleSizes;
 
         private static StatsSetting itemStat = new StatsSetting()
+        {
+            attackRange = Vector2Int.zero,
+            defenseRange = Vector2Int.zero,
+            healthRange = Vector2Int.one,
+        };
+
+        private static StatsSetting obstacleStat = new StatsSetting()
         {
             attackRange = Vector2Int.zero,
             defenseRange = Vector2Int.zero,
@@ -34,13 +42,14 @@ namespace Snake
             UnitType.HERO => heroStats.First(x => x.unitClass == unitClass),
             UnitType.MONSTER => monsterStats.First(x => x.unitClass == unitClass),
             UnitType.ITEM => itemStat,
+            UnitType.OBSTACLE => obstacleStat,
             _ => throw new NotImplementedException(unitType.ToString()),
         };
 
 
         public Vector2Int GetBoardSize() => boardSize;
 
-        public ItemBinding GetItemRandomly()
+        public ItemBinding GetRandomItem()
         {
             int totalWeight = spawnableItems.Sum(x => x.spawnWeight);
             int total = 0;
@@ -57,16 +66,21 @@ namespace Snake
         }
 
         [ContextMenu("TestRandom")]
-        private void TestRandom()
+        private void TestRandomItem()
         {
             List<int> spawnedId = new List<int>();
             for (int i = 0; i < 1000; i++)
             {
-                ItemBinding itemBinding = GetItemRandomly();
+                ItemBinding itemBinding = GetRandomItem();
                 spawnedId.Add(itemBinding.id);
             }
             Dictionary<int, int> dictionary = spawnedId.GroupBy(x => x).ToDictionary(k => k.Key, v => v.Count());
             Debug.Log(string.Join("\n", dictionary.Select(x => $"id {x.Key} {x.Value} ~ {x.Value / 10}%")));
+        }
+
+        public Vector2Int GetRandomObstaclesSize()
+        {
+            return obstacleSizes[Random.Range(0, obstacleSizes.Count)];
         }
 
         [Serializable]

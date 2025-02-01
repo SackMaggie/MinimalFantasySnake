@@ -16,7 +16,7 @@ namespace Snake
         public void Init(Vector2Int size)
         {
             //offset size of map to cover size of object
-            size += new Vector2Int(2, 2);
+            //size += new Vector2Int(2, 2);
             centerPiece.localScale = new Vector3(size.x, 0.5f, size.y);
             topBorder.localScale = new Vector3(size.x + borderScaleOffset.x, borderScaleOffset.y, borderScaleOffset.z);
             bottomBorder.localScale = new Vector3(size.x + borderScaleOffset.x, borderScaleOffset.y, borderScaleOffset.z);
@@ -26,7 +26,7 @@ namespace Snake
             int halfX = size.x / 2;
             int halfY = size.y / 2;
 
-            transform.localPosition = new Vector3(halfX - 1, 0, halfY - 1);
+            transform.localPosition = new Vector3(halfX - 0.5f, 0, halfY -0.5f);
 
             topBorder.localPosition = new Vector3(0, borderPositionOffset.y, halfY + borderPositionOffset.x);
             bottomBorder.localPosition = new Vector3(0, borderPositionOffset.y, -halfY - borderPositionOffset.x);
