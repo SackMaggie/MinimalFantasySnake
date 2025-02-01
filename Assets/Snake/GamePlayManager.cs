@@ -295,24 +295,44 @@ namespace Snake
                 case IPlayer player:
                     throw new InvalidOperationException($"Should not collide with {player}");
                 case IItem item:
-                    item.OnPickUp(playerUnit);
-                    item.IsDead = true;
-                    item.KillUnit(playerUnit);
-
-                    IUnit currentHero = playerUnit.CurrentHero;
-                    if (currentHero.Health <= 0)
                     {
-                        // hero is dead swap the next hero to battle and restart the loop
-                        Vector2Int position = currentHero.Position;
-                        playerUnit.ChildHero.Remove(currentHero);
-                        currentHero.IsDead = true;
-                        currentHero.KillUnit(item);
+                        item.OnPickUp(playerUnit);
+                        item.IsDead = true;
+                        item.KillUnit(playerUnit);
 
-                        if (playerUnit.ChildHero.Count > 0)
-                            MoveSnakePlayer(playerUnit, position);
+                        IUnit currentHero = playerUnit.CurrentHero;
+                        if (currentHero.Health <= 0)
+                        {
+                            // hero is dead swap the next hero to battle and restart the loop
+                            Vector2Int position = currentHero.Position;
+                            playerUnit.ChildHero.Remove(currentHero);
+                            currentHero.IsDead = true;
+                            currentHero.KillUnit(item);
+
+                            if (playerUnit.ChildHero.Count > 0)
+                                MoveSnakePlayer(playerUnit, position);
+                        }
+                        MoveSnakePlayer(playerUnit, nextPosition);
+                        return true;
                     }
-                    MoveSnakePlayer(playerUnit, nextPosition);
-                    return true;
+                case IUnitObstacle unitObstacle:
+                    {
+                        IUnit currentHero = playerUnit.CurrentHero;
+                        currentHero.Health = 0;
+                        if (currentHero.Health <= 0)
+                        {
+                            // hero is dead swap the next hero to battle and restart the loop
+                            Vector2Int position = currentHero.Position;
+                            playerUnit.ChildHero.Remove(currentHero);
+                            currentHero.IsDead = true;
+                            currentHero.KillUnit(unitObstacle);
+
+                            if (playerUnit.ChildHero.Count > 0)
+                                MoveSnakePlayer(playerUnit, position);
+                        }
+                        MoveSnakePlayer(playerUnit, nextPosition);
+                        return true;
+                    }
                 case null:
                     Debug.LogWarning("No Collision, just move");
                     MoveSnakePlayer(playerUnit, nextPosition);
