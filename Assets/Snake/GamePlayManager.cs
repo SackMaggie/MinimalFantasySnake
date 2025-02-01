@@ -291,6 +291,11 @@ namespace Snake
             stringBuilder.AppendLine($"Move Snake from {playerUnit.Position} to {nextPosition} direction {playerUnit.Direction}");
             try
             {
+                for (int i = playerUnit.ChildHero.Count - 1; i >= 1; i--)
+                {
+                    IUnit currentUnit = playerUnit.ChildHero[i];
+                    currentUnit.Direction = playerUnit.ChildHero[i - 1].Direction;
+                }
                 Vector2Int lastPosition = Vector2Int.zero;
                 for (int i = 0; i < playerUnit.ChildHero.Count; i++)
                 {
@@ -314,7 +319,7 @@ namespace Snake
                             $" target position {targetPosition}");
                         lastPosition = currentUnit.Position;
                         worldGrid.Move(currentUnit.Position, targetPosition);
-                        currentUnit.Direction = direction;
+                        //currentUnit.Direction = direction;
                     }
                 }
             }
