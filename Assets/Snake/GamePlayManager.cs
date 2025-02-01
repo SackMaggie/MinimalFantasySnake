@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 using Random = UnityEngine.Random;
@@ -87,6 +88,7 @@ namespace Snake
                 SnakeMovement snakeMovement = snakePlayer.GetComponent<SnakeMovement>();
                 snakeMovement.CheckCanMoveFunc = CheckCanPlayerMove;
                 snakeMovement.RequestMovementFunc = (movementContext) => OnPlayerMove(snakePlayer, movementContext);
+                snakeMovement.RequestCycleUnitAction = OnPressCycleUnit;
                 return snakePlayer;
             }
         }
@@ -271,19 +273,7 @@ namespace Snake
                         GameState = GameState.GameEnded;
                         return false;
                     }
-                    IUnit lastHeroUnit = playerUnit.ChildHero.LastOrDefault();
-
-                    //Use direction from last unit or player
-                    Direction direction = lastHeroUnit != null ? lastHeroUnit.Direction : playerUnit.Direction;
-                    Vector2Int lastChildHeroPosition = lastHeroUnit != null ? lastHeroUnit.Position : playerUnit.Position;
-
-                    //move hero to the back of the line
-                    Debug.Log($"Last Hero Unit {direction} {lastChildHeroPosition}", lastHeroUnit.GameObject);
-                    worldGrid.Move(nextPosition, direction.GetRelativePosition(lastChildHeroPosition, -1));
-                    hero.Direction = direction;
-
-                    playerUnit.ChildHero.Add(hero);
-                    MoveSnakePlayer(playerUnit, nextPosition);
+                    AddChildHero(playerUnit, nextPosition, hero, HeroAddMode.AddToBack);
                     return true;
                 case IMonster monster:
                     Debug.LogWarning("Collide with monster");
@@ -332,23 +322,85 @@ namespace Snake
             }
         }
 
-        internal void MoveSnakePlayer(IPlayer playerUnit, Vector2Int nextPosition)
+        /// <summary>
+        /// Rewrote and make it in-place swap
+        /// TargetUnit get remove temporary move the rest of the line
+        /// Add TargetUnit back to the line
+        /// </summary>
+        /// <param name="playerUnit"></param>
+        /// <param name="nextPosition"></param>
+        /// <param name="unit"></param>
+        /// <param name="heroAddMode"></param>
+        private void AddChildHero(IPlayer playerUnit, Vector2Int nextPosition, IUnit unit, HeroAddMode heroAddMode)
+        {
+            try
+            {
+                // target unit is use for location reference where the unit will be
+                IUnit targetUnit = heroAddMode switch
+                {
+                    HeroAddMode.AddToBack => playerUnit.ChildHero.LastOrDefault(),
+                    HeroAddMode.AddToFront => playerUnit.ChildHero.FirstOrDefault(),
+                    _ => throw new NotImplementedException(heroAddMode.ToString()),
+                };
+
+                // temporary remove unit from the grid to allow the hero line move safely
+                worldGrid.Remove(nextPosition);
+
+                // change the unit position to where it should
+                unit.Position = targetUnit.Position;
+                unit.Direction = targetUnit.Direction;
+
+                bool isMoveForward = heroAddMode switch
+                {
+                    HeroAddMode.AddToBack => true,
+                    HeroAddMode.AddToFront => false,
+                    _ => throw new NotImplementedException(),
+                };
+
+                // move head and hero line
+                MoveSnakePlayer(playerUnit, nextPosition, isMoveForward);
+
+                // add child to hero line
+                switch (heroAddMode)
+                {
+                    case HeroAddMode.AddToBack:
+                        playerUnit.ChildHero.Add(unit);
+                        break;
+                    case HeroAddMode.AddToFront:
+                        playerUnit.ChildHero.Insert(0, unit);
+                        break;
+                    default:
+                        throw new NotImplementedException(heroAddMode.ToString());
+                }
+
+                // re-added unit
+                worldGrid.AddUnit(unit);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+                throw;
+            }
+        }
+
+        internal void MoveSnakePlayer(IPlayer playerUnit, Vector2Int nextPosition, bool moveForward = true)
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.AppendLine($"Move Snake from {playerUnit.Position} to {nextPosition} direction {playerUnit.Direction}");
             try
             {
-                for (int i = playerUnit.ChildHero.Count - 1; i >= 1; i--)
+                IList<IUnit> childHero = moveForward ? playerUnit.ChildHero : playerUnit.ChildHero.Reverse().ToList();
+                for (int i = childHero.Count - 1; i >= 1; i--)
                 {
-                    IUnit currentUnit = playerUnit.ChildHero[i];
-                    currentUnit.Direction = playerUnit.ChildHero[i - 1].Direction;
+                    IUnit currentUnit = childHero[i];
+                    currentUnit.Direction = childHero[i - 1].Direction;
                 }
                 Vector2Int lastPosition = Vector2Int.zero;
-                for (int i = 0; i < playerUnit.ChildHero.Count; i++)
+                for (int i = 0; i < childHero.Count; i++)
                 {
                     Vector2Int targetPosition;
                     IUnit lastUnit;
-                    IUnit currentUnit = playerUnit.ChildHero[i];
+                    IUnit currentUnit = childHero[i];
                     Direction direction;
                     if (i == 0)
                     {
@@ -358,7 +410,7 @@ namespace Snake
                     }
                     else
                     {
-                        lastUnit = playerUnit.ChildHero[i - 1];
+                        lastUnit = childHero[i - 1];
                         targetPosition = lastPosition;
                         direction = lastUnit.Direction;
                         stringBuilder.AppendLine($"lastUnit {lastUnit.Position} {lastUnit.Direction}" +
@@ -366,7 +418,6 @@ namespace Snake
                             $" target position {targetPosition}");
                         lastPosition = currentUnit.Position;
                         worldGrid.Move(currentUnit.Position, targetPosition);
-                        //currentUnit.Direction = direction;
                     }
                 }
             }
@@ -389,6 +440,19 @@ namespace Snake
                                        select item;
             return query.ToArray();
         }
+
+        private void OnPressCycleUnit(bool isForward)
+        {
+            if (GameState != GameState.Playing)
+                return;
+            // no hero to cycle
+            if (SnakePlayer.ChildHero.Count < 2)
+                return;
+            IUnit unit = isForward ? SnakePlayer.ChildHero.First() : SnakePlayer.ChildHero.Last();
+            Vector2Int position = unit.Position;
+            SnakePlayer.ChildHero.Remove(unit);
+            AddChildHero(SnakePlayer, position, unit, isForward ? HeroAddMode.AddToBack : HeroAddMode.AddToFront);
+        }
     }
 
     public enum GameState
@@ -398,5 +462,11 @@ namespace Snake
         Playing,
         GameEnded,
         CleanUp,
+    }
+
+    public enum HeroAddMode
+    {
+        AddToBack,
+        AddToFront,
     }
 }

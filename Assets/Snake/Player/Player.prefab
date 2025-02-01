@@ -46,11 +46,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d272488ba3d8fb84db3476a651cedfd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  unitId: 0
   position: {x: 0, y: 0}
   health: 0
   attack: 0
   defense: 0
   direction: 0
+  isDead: 0
+  unitClass: 0
   childHeroCount: 0
   childHeroObject: []
 --- !u!114 &214596263978663655
@@ -180,6 +183,38 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 9caa3d8a-6b2f-4e8e-8bad-6ede561bd9be
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 214596263978663655}
+        m_TargetAssemblyTypeName: Snake.Movement.SnakeMovement, Snake
+        m_MethodName: HeroRotateForward
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: bb4e750b-1e02-4e37-9182-aa97695ef0ff
+    m_ActionName: 'Player/HeroRotateForward[/Keyboard/q]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 214596263978663655}
+        m_TargetAssemblyTypeName: Snake.Movement.SnakeMovement, Snake
+        m_MethodName: HeroRotateBackward
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 379e11ac-eb61-43b3-809e-e6d62fb3c3b0
+    m_ActionName: 'Player/HeroRotateBackward[/Keyboard/e]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
