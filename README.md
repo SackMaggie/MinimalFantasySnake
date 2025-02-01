@@ -72,7 +72,7 @@ Why not seperate each feature into different branch ? Did you just push strait t
 ### Extra Gameplay
 This section outlines additional gameplay requirements. These extra features
 are optional for evaluation.
-- [ ] Adjustable board size
+- [x] [Adjustable board size](https://github.com/SackMaggie/MinimalFantasySnake/pull/3)
 - [ ] Adding obstacles.
   - [ ] An obstacle can be either 1x1, 1x2, 2x1, or 2x2 in size.
   - [ ] Collide with Obstacle will remove the front character. Move the rest of the line normally.
