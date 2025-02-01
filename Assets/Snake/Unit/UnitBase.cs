@@ -15,6 +15,7 @@ namespace Snake.Unit
         [SerializeField] private int attack;
         [SerializeField] private int defense;
         [SerializeField] private Direction direction;
+        [SerializeField] private bool isDead;
 
         private UnityEvent<(IUnit unit, IUnit killer)> onKilled = new UnityEvent<(IUnit unit, IUnit killer)>();
         protected IUnit killer = null;
@@ -30,7 +31,15 @@ namespace Snake.Unit
                 transform.position = new Vector3(position.x, transform.position.y, position.y);
             }
         }
-        public virtual int UnitId { get => unitId; set => unitId = value; }
+        public virtual int UnitId
+        {
+            get => unitId; 
+            set
+            {
+                unitId = value;
+                gameObject.name = $"[{value}] {GetType().Name}";
+            }
+        }
         public virtual int Health { get => health; set => health = value; }
         public virtual int Attack { get => attack; set => attack = value; }
         public virtual int Defense { get => defense; set => defense = value; }
@@ -38,6 +47,8 @@ namespace Snake.Unit
         public UnityEvent<(IUnit unit, IUnit killer)> OnKilled => onKilled;
 
         GameObject IUnit.GameObject => this == null ? null : gameObject;
+
+        public bool IsDead { get => isDead; set => isDead = value; }
 
         public virtual void KillUnit(IUnit killer)
         {

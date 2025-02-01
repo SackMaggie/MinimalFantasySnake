@@ -11,6 +11,7 @@ namespace Snake.Unit
         Vector2Int Position { get; set; }
         Direction Direction { get; set; }
         GameObject GameObject { get; }
+        bool IsDead { get; set; }
 
         void KillUnit(IUnit killer);
 

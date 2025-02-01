@@ -104,7 +104,7 @@ namespace Snake
             //Only in play state
             if (GameState != GameState.Playing)
                 return;
-            Debug.Log($"OnUnitKilled {unit} {killer}");
+            Debug.Log($"OnUnitKilled {unit} by {killer}");
             OnUnitKill.Invoke(unit);
 
             if (snakePlayer.ChildHero.Count == 0)

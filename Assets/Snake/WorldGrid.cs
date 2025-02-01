@@ -118,7 +118,7 @@ namespace Snake.World
                     throw new Exception($"same position {from} : {to} unable to move");
                 IUnit sourceUnit = UnitGrid[from.x, from.y] ?? throw new Exception($"No unit at position {from}");
                 IUnit targetUnit = UnitGrid[to.x, to.y];
-                if (targetUnit != null)
+                if (targetUnit != null && !targetUnit.IsDead)
                     throw new Exception($"Position is occupied {to} by {targetUnit}");
                 UnitGrid[to.x, to.y] = UnitGrid[from.x, from.y];
                 UnitGrid[from.x, from.y] = null;
