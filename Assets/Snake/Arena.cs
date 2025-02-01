@@ -26,7 +26,7 @@ namespace Snake
             int halfX = size.x / 2;
             int halfY = size.y / 2;
 
-            transform.localPosition = new Vector3(halfX, 0, halfY);
+            transform.localPosition = new Vector3(halfX - 1, 0, halfY - 1);
 
             topBorder.localPosition = new Vector3(0, borderPositionOffset.y, halfY + borderPositionOffset.x);
             bottomBorder.localPosition = new Vector3(0, borderPositionOffset.y, -halfY - borderPositionOffset.x);

@@ -2,6 +2,7 @@ using Snake.Movement;
 using Snake.Unit;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using UnityEngine;
 
@@ -10,7 +11,7 @@ namespace Snake.Player
     public class SnakePlayer : UnitBase, Unit.IPlayer
     {
         public static SnakePlayer Instance;
-        private readonly List<IUnit> childHero = new List<IUnit>();
+        private readonly ObservableCollection<IUnit> childHero = new ObservableCollection<IUnit>();
         public IList<IUnit> ChildHero => childHero;
         public IUnit CurrentHero { get => ChildHero.FirstOrDefault(); set => throw new NotImplementedException(); }
 
@@ -67,11 +68,6 @@ namespace Snake.Player
         [SerializeField] private int childHeroCount;
         [SerializeField] private List<GameObject> childHeroObject = new List<GameObject>();
 
-        protected override void Start()
-        {
-            base.Start();
-        }
-
 #if UNITY_EDITOR
         protected override void Update()
         {
@@ -81,6 +77,12 @@ namespace Snake.Player
             childHeroObject = ChildHero.Select(x => x.GameObject).ToList();
         }
 #endif
+
+        protected override void OnDestroy()
+        {
+            ChildHero.Clear();
+            base.OnDestroy();
+        }
 
         public override void KillUnit(IUnit killer)
         {

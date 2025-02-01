@@ -22,12 +22,12 @@ namespace Snake
         public GameSetting gameSetting;
         public BattleManager battleManager;
         public Arena arena;
-        private SnakePlayer snakePlayer;
         public UnityEvent<IUnit> OnUnitSpawn = new UnityEvent<IUnit>();
         public UnityEvent<IUnit> OnUnitKill = new UnityEvent<IUnit>();
         public UnityEvent<GameState> OnGameStateChange = new UnityEvent<GameState>();
         private GameState gameState = GameState.None;
         public int CurrentUnitId { get; private set; } = 1;
+        public SnakePlayer SnakePlayer { get; private set; }
 
         public GameState GameState
         {
@@ -58,9 +58,9 @@ namespace Snake
             {
                 gamePlayManager = this
             };
-            if (snakePlayer != null)
-                Destroy(snakePlayer.gameObject);
-            snakePlayer = SpawnPlayer();
+            if (SnakePlayer != null)
+                Destroy(SnakePlayer.gameObject);
+            SnakePlayer = SpawnPlayer();
             _SpawnUnitType(UnitType.HERO);
             _SpawnUnitType(UnitType.MONSTER);
             GameState = GameState.Playing;
@@ -100,7 +100,7 @@ namespace Snake
             Debug.Log($"OnUnitKilled {unit} by {killer}");
             OnUnitKill.Invoke(unit);
 
-            if (snakePlayer.ChildHero.Count == 0)
+            if (SnakePlayer.ChildHero.Count == 0)
             {
                 GameState = GameState.GameEnded;
             }
