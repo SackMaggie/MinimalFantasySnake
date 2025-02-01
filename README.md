@@ -90,7 +90,7 @@ are optional for evaluation.
 - [ ] Make game more configurable
   - [ ] Ability to specify each class stats separately
   - [ ] Ability to make monster stronger over time
-- [x] Adding Items
+- [x] [Adding Items](https://github.com/SackMaggie/MinimalFantasySnake/pull/2)
   - [x] Recovery item
   - [x] Increase attack or defense
 - [ ] Adding Level system with progression
