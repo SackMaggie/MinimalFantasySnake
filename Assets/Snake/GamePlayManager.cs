@@ -47,22 +47,21 @@ namespace Snake
             }
         }
 
-        protected override void Start()
-        {
-            base.Start();
-
-            InitilizeGame();
-        }
-
-
         public void InitilizeGame()
         {
             GameState = GameState.Initilizing;
+            foreach (IUnit item in GetAllUnit())
+            {
+                if (item.GameObject != null)
+                    Destroy(item.GameObject);
+            }
             worldGrid.CreateGrid(worldGridSize);
             battleManager = new BattleManager
             {
                 gamePlayManager = this
             };
+            if (snakePlayer != null)
+                snakePlayer.KillUnit(null);
             snakePlayer = SpawnPlayer();
             _SpawnUnitType(UnitType.HERO);
             _SpawnUnitType(UnitType.MONSTER);
@@ -89,10 +88,6 @@ namespace Snake
                 SnakeMovement snakeMovement = snakePlayer.GetComponent<SnakeMovement>();
                 snakeMovement.CheckCanMoveFunc = CheckCanPlayerMove;
                 snakeMovement.RequestMovementFunc = (movementContext) => OnPlayerMove(snakePlayer, movementContext);
-
-                //temp just for clarification
-                snakePlayer.GetComponent<Renderer>().material.color = Color.blue;
-
                 return snakePlayer;
             }
         }
@@ -314,6 +309,8 @@ namespace Snake
 
         internal IUnit[] GetAllUnit()
         {
+            if (worldGrid == null || worldGrid.UnitGrid == null)
+                return Array.Empty<IUnit>();
             IEnumerable<IUnit> query = from IUnit item in worldGrid.UnitGrid
                                        where item != null
                                        select item;

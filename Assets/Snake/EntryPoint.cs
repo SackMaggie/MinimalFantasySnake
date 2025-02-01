@@ -45,6 +45,7 @@ namespace Snake
             }
             gamePlayManager.OnGameStateChange.RemoveListener(OnGameStateChange);
             gamePlayManager.OnGameStateChange.AddListener(OnGameStateChange);
+            gamePlayManager.InitilizeGame();
             DestroyGameMenu();
         }
 

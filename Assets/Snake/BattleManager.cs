@@ -71,7 +71,8 @@ namespace Snake.Battle
                     player.ChildHero.Remove(currentHero);
                     currentHero.KillUnit(monster);
 
-                    gamePlayManager.MoveSnakePlayer(player, position);
+                    if (player.ChildHero.Count > 0)
+                        gamePlayManager.MoveSnakePlayer(player, position);
                     battleResult = BattleResult.Lose;
                     continue;
                 }

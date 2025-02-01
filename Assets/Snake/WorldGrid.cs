@@ -51,17 +51,6 @@ namespace Snake.World
         {
             this.gridSize = gridSize;
             UnitGrid = new IUnit[gridSize.x, gridSize.y];
-            //Test fill the grid
-            /*for (int x = 0; x < gridSize.x; x++)
-            {
-                for (int y = 0; y < gridSize.y; y++)
-                {
-                    UnitGrid[x, y] = new TestUnit()
-                    {
-                        Position = new Vector2Int(x, y),
-                    };
-                }
-            }*/
         }
 
         internal Vector2Int GetEmptyPosition()
