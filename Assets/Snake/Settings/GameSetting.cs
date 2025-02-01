@@ -14,6 +14,14 @@ namespace Snake
         [SerializeField] private StatsSetting heroStat;
         [SerializeField] private StatsSetting monsterStat;
         [SerializeField] private Vector2Int boardSize = new Vector2Int(16, 16);
+        [SerializeField] private List<ItemBinding> spawnableItems;
+
+        private static StatsSetting itemStat = new StatsSetting()
+        {
+            attackRange = Vector2Int.zero,
+            defenseRange = Vector2Int.zero,
+            healthRange = Vector2Int.one,
+        };
 
         public SpawnSetting GetSpawnSetting(UnitType unitType)
         {
@@ -24,10 +32,41 @@ namespace Snake
         {
             UnitType.HERO => heroStat,
             UnitType.MONSTER => monsterStat,
+            UnitType.ITEM => itemStat,
             _ => throw new NotImplementedException(unitType.ToString()),
         };
 
+
         public Vector2Int GetBoardSize() => boardSize;
+
+        public ItemBinding GetItemRandomly()
+        {
+            int totalWeight = spawnableItems.Sum(x => x.spawnWeight);
+            int total = 0;
+            int value = Random.Range(0, totalWeight + 1);
+            for (int i = 0; i < spawnableItems.Count; i++)
+            {
+                ItemBinding itemBinding = spawnableItems[i];
+                total += itemBinding.spawnWeight;
+                if (total >= value)
+                    return itemBinding;
+            }
+            Debug.Log("Error");
+            return spawnableItems.FirstOrDefault();
+        }
+
+        [ContextMenu("TestRandom")]
+        private void TestRandom()
+        {
+            List<int> spawnedId = new List<int>();
+            for (int i = 0; i < 1000; i++)
+            {
+                ItemBinding itemBinding = GetItemRandomly();
+                spawnedId.Add(itemBinding.id);
+            }
+            Dictionary<int, int> dictionary = spawnedId.GroupBy(x => x).ToDictionary(k => k.Key, v => v.Count());
+            Debug.Log(string.Join("\n", dictionary.Select(x => $"id {x.Key} {x.Value} ~ {x.Value / 10}%")));
+        }
 
         [Serializable]
         public class SpawnSetting
@@ -48,6 +87,18 @@ namespace Snake
             public int Health => Random.Range(healthRange.x, healthRange.y);
             public int Attack => Random.Range(attackRange.x, attackRange.y);
             public int Defense => Random.Range(defenseRange.x, defenseRange.y);
+        }
+
+        [Serializable]
+        public class ItemBinding
+        {
+            public int id;
+            /// <summary>
+            /// Weight of the spawn, not the chances
+            /// </summary>
+            public ushort spawnWeight = 10;
+            public Item.ItemProperty property;
+            public GameObject objectBinding;
         }
     }
 }

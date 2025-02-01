@@ -14,13 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnSettings:
   - unitType: 0
-    maxSpawnCount: 4
+    maxSpawnCount: 6
     minSpawnCount: 1
     spawnChance: 0.6
   - unitType: 1
     maxSpawnCount: 5
     minSpawnCount: 1
     spawnChance: 0.8
+  - unitType: 2
+    maxSpawnCount: 2
+    minSpawnCount: 0
+    spawnChance: 0.6
   heroStat:
     healthRange: {x: 2, y: 20}
     attackRange: {x: 1, y: 10}
@@ -30,3 +34,42 @@ MonoBehaviour:
     attackRange: {x: 3, y: 10}
     defenseRange: {x: 0, y: 5}
   boardSize: {x: 20, y: 20}
+  spawnableItems:
+  - id: 1
+    spawnWeight: 10
+    property:
+      itemEffects:
+      - commandType: 0
+        attribute: 2
+        value: 5
+    objectBinding: {fileID: 1935876365721685322, guid: 2019c1c47ed9a8444a9ca736023f8904, type: 3}
+  - id: 2
+    spawnWeight: 10
+    property:
+      itemEffects:
+      - commandType: 0
+        attribute: 0
+        value: 2
+    objectBinding: {fileID: 1935876365721685322, guid: 2019c1c47ed9a8444a9ca736023f8904, type: 3}
+  - id: 3
+    spawnWeight: 10
+    property:
+      itemEffects:
+      - commandType: 0
+        attribute: 1
+        value: 1
+    objectBinding: {fileID: 1935876365721685322, guid: 2019c1c47ed9a8444a9ca736023f8904, type: 3}
+  - id: 4
+    spawnWeight: 5
+    property:
+      itemEffects:
+      - commandType: 0
+        attribute: 0
+        value: 1
+      - commandType: 0
+        attribute: 1
+        value: 1
+      - commandType: 0
+        attribute: 2
+        value: 5
+    objectBinding: {fileID: 1935876365721685322, guid: 2019c1c47ed9a8444a9ca736023f8904, type: 3}
