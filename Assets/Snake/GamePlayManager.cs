@@ -16,17 +16,18 @@ namespace Snake
     public class GamePlayManager : CustomMonoBehaviour
     {
         public WorldGrid worldGrid;
-        private Vector2Int worldGridSize = new Vector2Int(16, 16);
+        private Vector2Int worldGridSize;
         [Space]
         public SpawnableReference spawnableReference;
         public GameSetting gameSetting;
         public BattleManager battleManager;
-        private SnakePlayer snakePlayer;
+        public Arena arena;
         public UnityEvent<IUnit> OnUnitSpawn = new UnityEvent<IUnit>();
         public UnityEvent<IUnit> OnUnitKill = new UnityEvent<IUnit>();
         public UnityEvent<GameState> OnGameStateChange = new UnityEvent<GameState>();
         private GameState gameState = GameState.None;
         public int CurrentUnitId { get; private set; } = 1;
+        public SnakePlayer SnakePlayer { get; private set; }
 
         public GameState GameState
         {
@@ -50,14 +51,16 @@ namespace Snake
                 if (item.GameObject != null)
                     Destroy(item.GameObject);
             }
+            worldGridSize = gameSetting.GetBoardSize();
+            arena.Init(worldGridSize);
             worldGrid.CreateGrid(worldGridSize);
             battleManager = new BattleManager
             {
                 gamePlayManager = this
             };
-            if (snakePlayer != null)
-                Destroy(snakePlayer.gameObject);
-            snakePlayer = SpawnPlayer();
+            if (SnakePlayer != null)
+                Destroy(SnakePlayer.gameObject);
+            SnakePlayer = SpawnPlayer();
             _SpawnUnitType(UnitType.HERO);
             _SpawnUnitType(UnitType.MONSTER);
             _SpawnUnitType(UnitType.ITEM);
@@ -98,7 +101,7 @@ namespace Snake
             Debug.Log($"OnUnitKilled {unit} by {killer}");
             OnUnitKill.Invoke(unit);
 
-            if (snakePlayer.ChildHero.Count == 0)
+            if (SnakePlayer.ChildHero.Count == 0)
             {
                 GameState = GameState.GameEnded;
             }

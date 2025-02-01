@@ -13,6 +13,7 @@ namespace Snake
         [SerializeField] private List<SpawnSetting> spawnSettings;
         [SerializeField] private StatsSetting heroStat;
         [SerializeField] private StatsSetting monsterStat;
+        [SerializeField] private Vector2Int boardSize = new Vector2Int(16, 16);
         [SerializeField] private List<ItemBinding> spawnableItems;
 
         private static StatsSetting itemStat = new StatsSetting()
@@ -34,6 +35,9 @@ namespace Snake
             UnitType.ITEM => itemStat,
             _ => throw new NotImplementedException(unitType.ToString()),
         };
+
+
+        public Vector2Int GetBoardSize() => boardSize;
 
         public ItemBinding GetItemRandomly()
         {

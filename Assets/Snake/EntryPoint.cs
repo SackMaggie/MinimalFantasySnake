@@ -1,6 +1,10 @@
+using Snake.Player;
+using Snake.Unit;
 using Snake.World;
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
+using Unity.Cinemachine;
 using UnityEngine;
 
 namespace Snake
@@ -12,6 +16,9 @@ namespace Snake
         [SerializeField] private GameObject uiInputPrefab;
         [SerializeField] private GamePlayManager gamePlayManager;
         [SerializeField] private WorldGrid worldGrid;
+        [SerializeField] private Arena arena;
+        [SerializeField] private CinemachineTargetGroup targetGroup;
+        [SerializeField] private SnakeChildObserver snakeChildObserver;
 
         private Canvas canvasUI;
 
@@ -47,6 +54,7 @@ namespace Snake
             }
             if (uiInput == null)
                 uiInput = Instantiate(uiInputPrefab, canvasUI.transform, false);
+            gamePlayManager.arena = arena;
             gamePlayManager.OnGameStateChange.RemoveListener(OnGameStateChange);
             gamePlayManager.OnGameStateChange.AddListener(OnGameStateChange);
             gamePlayManager.InitilizeGame();
@@ -69,6 +77,8 @@ namespace Snake
                     DestroyGameMenu();
                     break;
                 case GameState.Playing:
+                    SnakePlayer snakePlayer = gamePlayManager.SnakePlayer;
+                    snakeChildObserver.Init(snakePlayer.ChildHero as ObservableCollection<IUnit>);
                     break;
                 case GameState.GameEnded:
                     CreateGameMenu();
