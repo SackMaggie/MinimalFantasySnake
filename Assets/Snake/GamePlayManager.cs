@@ -16,7 +16,7 @@ namespace Snake
     public class GamePlayManager : CustomMonoBehaviour
     {
         public WorldGrid worldGrid;
-        private Vector2Int worldGridSize = new Vector2Int(16, 16);
+        private Vector2Int worldGridSize;
         [Space]
         public SpawnableReference spawnableReference;
         public GameSetting gameSetting;
@@ -50,6 +50,7 @@ namespace Snake
                 if (item.GameObject != null)
                     Destroy(item.GameObject);
             }
+            worldGridSize = gameSetting.GetBoardSize();
             worldGrid.CreateGrid(worldGridSize);
             battleManager = new BattleManager
             {

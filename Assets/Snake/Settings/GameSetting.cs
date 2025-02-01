@@ -13,6 +13,7 @@ namespace Snake
         [SerializeField] private List<SpawnSetting> spawnSettings;
         [SerializeField] private StatsSetting heroStat;
         [SerializeField] private StatsSetting monsterStat;
+        [SerializeField] private Vector2Int boardSize = new Vector2Int(16, 16);
 
         public SpawnSetting GetSpawnSetting(UnitType unitType)
         {
@@ -25,6 +26,8 @@ namespace Snake
             UnitType.MONSTER => monsterStat,
             _ => throw new NotImplementedException(unitType.ToString()),
         };
+
+        public Vector2Int GetBoardSize() => boardSize;
 
         [Serializable]
         public class SpawnSetting
