@@ -43,8 +43,8 @@ namespace Snake.World
                     }
                 }
             }
-#endif
         }
+#endif
 
         internal void CreateGrid(Vector2Int gridSize)
         {
