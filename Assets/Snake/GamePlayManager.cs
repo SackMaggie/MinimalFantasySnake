@@ -60,6 +60,7 @@ namespace Snake
             snakePlayer = SpawnPlayer();
             _SpawnUnitType(UnitType.HERO);
             _SpawnUnitType(UnitType.MONSTER);
+            _SpawnUnitType(UnitType.ITEM);
             GameState = GameState.Playing;
 
 
@@ -147,19 +148,42 @@ namespace Snake
 
         private IUnit SpawnUnitType(UnitType unitType)
         {
-            GameObject gameObjectRef = spawnableReference.GetObjectFromType(unitType);
-            GameObject newGameObject = Instantiate(gameObjectRef, worldGrid.transform, false);
-            newGameObject.transform.position = worldGrid.transform.position;
+            GameObject gameObjectRef;
+            GameObject newGameObject;
+            IUnit unit;
+            switch (unitType)
+            {
+                case UnitType.HERO:
+                case UnitType.MONSTER:
+                    gameObjectRef = spawnableReference.GetObjectFromType(unitType);
+                    newGameObject = Instantiate(gameObjectRef, worldGrid.transform, false);
+                    newGameObject.transform.position = worldGrid.transform.position;
+                    unit = newGameObject.GetComponent<IUnit>();
+                    break;
+                case UnitType.ITEM:
+                    GameSetting.ItemBinding itemBinding = gameSetting.GetItemRandomly();
+                    gameObjectRef = itemBinding.objectBinding;
+                    newGameObject = Instantiate(gameObjectRef, worldGrid.transform, false);
+                    newGameObject.transform.position = worldGrid.transform.position;
+                    IItem item = newGameObject.GetComponent<IItem>();
+                    unit = item;
+
+                    item.ApplyItemProperty(itemBinding.property);
+                    break;
+                default:
+                    throw new NotImplementedException(unitType.ToString());
+            }
 
             //temp just for clarification
             newGameObject.GetComponent<Renderer>().material.color = unitType switch
             {
                 UnitType.MONSTER => Color.red,
                 UnitType.HERO => Color.green,
+                UnitType.ITEM => Color.yellow,
                 _ => throw new NotImplementedException(unitType.ToString()),
             };
 
-            return newGameObject.GetComponent<IUnit>();
+            return unit;
         }
 
         private IUnit SpawnUnitType(UnitType unitType, Vector2Int position)
@@ -195,7 +219,7 @@ namespace Snake
         /// true for successful move and false for any other reason
         /// </returns>
         /// <exception cref="NotImplementedException"></exception>
-        private bool OnPlayerMove(SnakePlayer snakePlayer, MovementContext movementContext)
+        private bool OnPlayerMove(IPlayer snakePlayer, MovementContext movementContext)
         {
             if (!CheckCanPlayerMove())
                 return false;
@@ -219,7 +243,12 @@ namespace Snake
             //process movementContext
             Vector2Int nextPosition = movementContext.newDirection.GetRelativePosition(currentPosition);
             IUnit unit = worldGrid.GetUnit(nextPosition);
-            switch (unit)
+            return OnUnitCollision(playerUnit, nextPosition, unit);
+        }
+
+        private bool OnUnitCollision(IPlayer playerUnit, Vector2Int nextPosition, IUnit collisionUnit)
+        {
+            switch (collisionUnit)
             {
                 case IHeros hero:
                     Debug.LogWarning("Collide with hero");
@@ -262,12 +291,31 @@ namespace Snake
                     }
                 case IPlayer player:
                     throw new InvalidOperationException($"Should not collide with {player}");
+                case IItem item:
+                    item.OnPickUp(playerUnit);
+                    item.IsDead = true;
+                    item.KillUnit(playerUnit);
+
+                    IUnit currentHero = playerUnit.CurrentHero;
+                    if (currentHero.Health <= 0)
+                    {
+                        // hero is dead swap the next hero to battle and restart the loop
+                        Vector2Int position = currentHero.Position;
+                        playerUnit.ChildHero.Remove(currentHero);
+                        currentHero.IsDead = true;
+                        currentHero.KillUnit(item);
+
+                        if (playerUnit.ChildHero.Count > 0)
+                            MoveSnakePlayer(playerUnit, position);
+                    }
+                    MoveSnakePlayer(playerUnit, nextPosition);
+                    return true;
                 case null:
                     Debug.LogWarning("No Collision, just move");
                     MoveSnakePlayer(playerUnit, nextPosition);
                     return true;
                 default:
-                    throw new NotImplementedException(unit.GetType().ToString());
+                    throw new NotImplementedException(collisionUnit.GetType().ToString());
             }
         }
 
