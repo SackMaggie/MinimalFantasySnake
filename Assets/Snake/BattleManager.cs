@@ -12,6 +12,11 @@ namespace Snake.Battle
     /// </summary>
     public class BattleManager
     {
+        /// <summary>
+        /// How much damage is amplified after calculation when attacking
+        /// </summary>
+        private const int DAMAGE_AMP_WEAKNESS = 2;
+        private const int DAMAGE_AMP_NORMAL = 1;
         public GamePlayManager gamePlayManager;
 
         /// <summary>
@@ -108,12 +113,30 @@ namespace Snake.Battle
             //formula: Damage = (Attacker Attack - Defender Defense)
             //attack and defense should not be negative
             //damage output should not be negative
-            return attacker.Attack < 0
-                ? throw new ArgumentException($"Unit have negative attack")
-                : defender.Defense < 0
-                ? throw new ArgumentException($"Unit have negative defense")
-                : Mathf.Max(attacker.Attack - defender.Defense, 0);
+            if (attacker.Attack < 0)
+                Debug.LogException(new ArgumentException($"Unit have negative attack"));
+            if (defender.Defense < 0)
+                Debug.LogException(new ArgumentException($"Unit have negative defense"));
+
+            int attack = Mathf.Abs(attacker.Attack);
+            int defense = Mathf.Abs(defender.Defense);
+            int damageAmplifier = GetDamageAmplifier(attacker, defender);
+            return Mathf.Max(attack - defense, 0) * damageAmplifier;
         }
+
+        private static int GetDamageAmplifier(IUnit attacker, IUnit defender)
+        {
+            return WeaknessCheck(attacker.UnitClass, defender.UnitClass) ? DAMAGE_AMP_WEAKNESS : DAMAGE_AMP_NORMAL;
+        }
+
+        private static bool WeaknessCheck(UnitClassEnum attacker, UnitClassEnum defender) => attacker switch
+        {
+            UnitClassEnum.None => false,
+            UnitClassEnum.Warrior => defender == UnitClassEnum.Rogue,
+            UnitClassEnum.Rogue => defender == UnitClassEnum.Wizard,
+            UnitClassEnum.Wizard => defender == UnitClassEnum.Warrior,
+            _ => throw new NotImplementedException(attacker.ToString()),
+        };
     }
 
     public enum BattleResult

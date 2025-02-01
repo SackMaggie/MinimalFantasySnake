@@ -1,4 +1,5 @@
 using Snake.Player;
+using Snake.Unit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +12,8 @@ namespace Snake
     public class GameSetting : ScriptableObject
     {
         [SerializeField] private List<SpawnSetting> spawnSettings;
-        [SerializeField] private StatsSetting heroStat;
-        [SerializeField] private StatsSetting monsterStat;
+        [SerializeField] private List<StatsSetting> heroStats;
+        [SerializeField] private List<StatsSetting> monsterStats;
         [SerializeField] private Vector2Int boardSize = new Vector2Int(16, 16);
         [SerializeField] private List<ItemBinding> spawnableItems;
 
@@ -28,10 +29,10 @@ namespace Snake
             return spawnSettings.FirstOrDefault(x => x.unitType == unitType);
         }
 
-        public StatsSetting GetStatsSetting(UnitType unitType) => unitType switch
+        public StatsSetting GetStatsSetting(UnitType unitType, UnitClassEnum unitClass) => unitType switch
         {
-            UnitType.HERO => heroStat,
-            UnitType.MONSTER => monsterStat,
+            UnitType.HERO => heroStats.First(x => x.unitClass == unitClass),
+            UnitType.MONSTER => monsterStats.First(x => x.unitClass == unitClass),
             UnitType.ITEM => itemStat,
             _ => throw new NotImplementedException(unitType.ToString()),
         };
@@ -80,6 +81,7 @@ namespace Snake
         [Serializable]
         public class StatsSetting
         {
+            public UnitClassEnum unitClass;
             public Vector2Int healthRange;
             public Vector2Int attackRange;
             public Vector2Int defenseRange;

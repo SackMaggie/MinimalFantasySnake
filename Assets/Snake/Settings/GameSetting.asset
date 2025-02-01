@@ -25,14 +25,32 @@ MonoBehaviour:
     maxSpawnCount: 2
     minSpawnCount: 0
     spawnChance: 0.6
-  heroStat:
-    healthRange: {x: 2, y: 20}
-    attackRange: {x: 1, y: 10}
-    defenseRange: {x: 2, y: 3}
-  monsterStat:
-    healthRange: {x: 2, y: 15}
-    attackRange: {x: 3, y: 10}
-    defenseRange: {x: 0, y: 5}
+  heroStats:
+  - unitClass: 1
+    healthRange: {x: 8, y: 20}
+    attackRange: {x: 3, y: 7}
+    defenseRange: {x: 3, y: 6}
+  - unitClass: 2
+    healthRange: {x: 6, y: 12}
+    attackRange: {x: 4, y: 8}
+    defenseRange: {x: 2, y: 5}
+  - unitClass: 3
+    healthRange: {x: 4, y: 8}
+    attackRange: {x: 5, y: 12}
+    defenseRange: {x: 1, y: 3}
+  monsterStats:
+  - unitClass: 1
+    healthRange: {x: 6, y: 14}
+    attackRange: {x: 2, y: 8}
+    defenseRange: {x: 2, y: 8}
+  - unitClass: 2
+    healthRange: {x: 3, y: 8}
+    attackRange: {x: 2, y: 6}
+    defenseRange: {x: 0, y: 2}
+  - unitClass: 3
+    healthRange: {x: 2, y: 5}
+    attackRange: {x: 5, y: 10}
+    defenseRange: {x: 0, y: 1}
   boardSize: {x: 20, y: 20}
   spawnableItems:
   - id: 1
