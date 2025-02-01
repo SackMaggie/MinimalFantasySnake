@@ -196,6 +196,7 @@ namespace Snake
             unit.UnitId = CurrentUnitId++;
             unit.Position = position;
             unit.Direction = GetRandomDirection();
+            unit.UnitClass = GetRandomUnitClass();
             unit.ApplyStats(gameSetting.GetStatsSetting(unitType));
             unit.OnKilled.AddListener(OnUnitKilled);
             worldGrid.AddUnit(unit);
@@ -204,9 +205,18 @@ namespace Snake
 
             static Direction GetRandomDirection()
             {
+                // could be cached
                 Direction[] directions = Enum.GetValues(typeof(Direction)).Cast<Direction>().ToArray();
 
                 return directions[Random.Range(0, directions.Length)];
+            }
+
+            static UnitClassEnum GetRandomUnitClass()
+            {
+                // could be cached
+                UnitClassEnum[] unitClasses = Enum.GetValues(typeof(UnitClassEnum)).Cast<UnitClassEnum>().Where(x => x != UnitClassEnum.None).ToArray();
+
+                return unitClasses[Random.Range(0, unitClasses.Length)];
             }
         }
 
