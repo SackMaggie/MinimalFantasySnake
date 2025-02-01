@@ -4,10 +4,10 @@ Fantasy Snake is a Snake game with Fantasy RPG mixed. The player controls a grow
 ### Core Gameplay
 - [x] The game will be played on a 16x16 grid board.
 - [x] At the start of the game, spawn a player-controlled Hero, a number of collectable Heroes, and a number of Monsters.
-- [ ] The player can do the following actions:
-  - [ ] To move
+- [x] The player can do the following actions:
+  - [x] To move
     - [x] Press WASD on the keyboard to move in the up, left, right, and down directions.
-    - [ ] Pressing the DPad on the gamepad
+    - [x] Pressing the DPad on the gamepad
     - [x] The player cannot move in the opposite direction. If the player character is facing up, they can go left, up, or right, but not down.
     - [x] The Hero beside the front character will move to occupy the same space as the previous Hero.
 - [x] Unlike Snake, there is no fixed interval for movement. This game uses a turn-based system, in which a turn is passed only when the player makes a move.
