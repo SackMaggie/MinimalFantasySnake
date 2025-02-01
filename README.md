@@ -76,7 +76,7 @@ are optional for evaluation.
 - [ ] Adding obstacles.
   - [ ] An obstacle can be either 1x1, 1x2, 2x1, or 2x2 in size.
   - [ ] Collide with Obstacle will remove the front character. Move the rest of the line normally.
-- [x] Player can rotate hero characters in the line
+- [x] [Player can rotate hero characters in the line](https://github.com/SackMaggie/MinimalFantasySnake/pull/5)
   - [x] Pressing Q on the keyboard or the left shoulder button on the gamepad will rotate the second character in line to be the front character and the front character to be the last.
   - [x] Pressing E on the keyboard or the right shoulder button on the gamepad will switch the last character in line to be the front character and the front character to be the second.
   - [x] The rest of the line will be rotated accordingly.
