@@ -69,6 +69,8 @@ namespace Snake
 
         private void OnGameStateChange(GameState gameState)
         {
+            if (this == null)
+                return;
             switch (gameState)
             {
                 case GameState.None:

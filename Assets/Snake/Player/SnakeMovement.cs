@@ -18,6 +18,7 @@ namespace Snake.Movement
 
         public Func<bool> CheckCanMoveFunc;
         public Func<MovementContext, bool> RequestMovementFunc;
+        public Action<bool> RequestCycleUnitAction;
 
         protected override void Start()
         {
@@ -32,7 +33,7 @@ namespace Snake.Movement
         }
 
         /// <summary>
-        /// Hook from PlayerInput component
+        /// Hook from PlayerInput component -> <see cref="PlayerInput.actionEvents"/>
         /// </summary>
         /// <param name="callbackContext"></param>
         public void Move(CallbackContext callbackContext)
@@ -133,14 +134,26 @@ namespace Snake.Movement
             }
         }
 
+        /// <summary>
+        /// Hook from PlayerInput component -> <see cref="PlayerInput.actionEvents"/>
+        /// </summary>
+        /// <param name="callbackContext"></param>
         public void HeroRotateForward(CallbackContext callbackContext)
         {
             Debug.Log($"HeroRotateForward {callbackContext.ReadValueAsObject()} {callbackContext.phase}");
+            if (callbackContext.phase == InputActionPhase.Performed)
+                RequestCycleUnitAction.Invoke(true);
         }
 
+        /// <summary>
+        /// Hook from PlayerInput component -> <see cref="PlayerInput.actionEvents"/>
+        /// </summary>
+        /// <param name="callbackContext"></param>
         public void HeroRotateBackward(CallbackContext callbackContext)
         {
             Debug.Log($"HeroRotateBackward {callbackContext.ReadValueAsObject()} {callbackContext.phase}");
+            if (callbackContext.phase == InputActionPhase.Performed)
+                RequestCycleUnitAction.Invoke(false);
         }
     }
 

@@ -87,6 +87,7 @@ namespace Snake
                 SnakeMovement snakeMovement = snakePlayer.GetComponent<SnakeMovement>();
                 snakeMovement.CheckCanMoveFunc = CheckCanPlayerMove;
                 snakeMovement.RequestMovementFunc = (movementContext) => OnPlayerMove(snakePlayer, movementContext);
+                snakeMovement.RequestCycleUnitAction = OnPressCycleUnit;
                 return snakePlayer;
             }
         }
@@ -271,19 +272,7 @@ namespace Snake
                         GameState = GameState.GameEnded;
                         return false;
                     }
-                    IUnit lastHeroUnit = playerUnit.ChildHero.LastOrDefault();
-
-                    //Use direction from last unit or player
-                    Direction direction = lastHeroUnit != null ? lastHeroUnit.Direction : playerUnit.Direction;
-                    Vector2Int lastChildHeroPosition = lastHeroUnit != null ? lastHeroUnit.Position : playerUnit.Position;
-
-                    //move hero to the back of the line
-                    Debug.Log($"Last Hero Unit {direction} {lastChildHeroPosition}", lastHeroUnit.GameObject);
-                    worldGrid.Move(nextPosition, direction.GetRelativePosition(lastChildHeroPosition, -1));
-                    hero.Direction = direction;
-
-                    playerUnit.ChildHero.Add(hero);
-                    MoveSnakePlayer(playerUnit, nextPosition);
+                    AddChildHero(playerUnit, nextPosition, hero);
                     return true;
                 case IMonster monster:
                     Debug.LogWarning("Collide with monster");
@@ -330,6 +319,23 @@ namespace Snake
                 default:
                     throw new NotImplementedException(collisionUnit.GetType().ToString());
             }
+        }
+
+        private void AddChildHero(IPlayer playerUnit, Vector2Int nextPosition, IUnit unit)
+        {
+            IUnit lastHeroUnit = playerUnit.ChildHero.LastOrDefault();
+
+            //Use direction from last unit or player
+            Direction direction = lastHeroUnit != null ? lastHeroUnit.Direction : playerUnit.Direction;
+            Vector2Int lastChildHeroPosition = lastHeroUnit != null ? lastHeroUnit.Position : playerUnit.Position;
+
+            //move hero to the back of the line
+            Debug.Log($"Last Hero Unit {direction} {lastChildHeroPosition}", lastHeroUnit.GameObject);
+            worldGrid.Move(nextPosition, direction.GetRelativePosition(lastChildHeroPosition, -1));
+            unit.Direction = direction;
+
+            playerUnit.ChildHero.Add(unit);
+            MoveSnakePlayer(playerUnit, nextPosition);
         }
 
         internal void MoveSnakePlayer(IPlayer playerUnit, Vector2Int nextPosition)
@@ -388,6 +394,17 @@ namespace Snake
                                        where item != null
                                        select item;
             return query.ToArray();
+        }
+
+        private void OnPressCycleUnit(bool isForward)
+        {
+            if (GameState != GameState.Playing)
+                return;
+
+            IUnit unit = SnakePlayer.ChildHero.First();
+            Vector2Int position = unit.Position;
+            SnakePlayer.ChildHero.Remove(unit);
+            AddChildHero(SnakePlayer, position, unit);
         }
     }
 
