@@ -171,7 +171,7 @@ namespace Snake.Movement
             return ((sbyte)oldDirection + (sbyte)newDirection) == 0;
         }
 
-        public static Vector2Int GetRelativePosition(this Direction direction, Vector2Int currentPosition, short distance = 1)
+        public static Vector2Int GetRelativePosition(this Direction direction, Vector2Int currentPosition, int distance = 1)
         {
             switch (direction)
             {

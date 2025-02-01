@@ -17,6 +17,7 @@ namespace Snake.Unit
             IMonster => UnitType.MONSTER,
             IHeros => UnitType.HERO,
             IItem => UnitType.ITEM,
+            IUnitObstacle => UnitType.OBSTACLE,
             _ => throw new NotImplementedException(unit.GetType().ToString()),
         };
 

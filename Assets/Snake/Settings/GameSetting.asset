@@ -25,6 +25,10 @@ MonoBehaviour:
     maxSpawnCount: 2
     minSpawnCount: 0
     spawnChance: 0.6
+  - unitType: 3
+    maxSpawnCount: 3
+    minSpawnCount: 1
+    spawnChance: 0
   heroStats:
   - unitClass: 1
     healthRange: {x: 8, y: 20}
@@ -51,7 +55,7 @@ MonoBehaviour:
     healthRange: {x: 2, y: 5}
     attackRange: {x: 5, y: 10}
     defenseRange: {x: 0, y: 1}
-  boardSize: {x: 20, y: 20}
+  boardSize: {x: 16, y: 16}
   spawnableItems:
   - id: 1
     spawnWeight: 10
@@ -91,3 +95,8 @@ MonoBehaviour:
         attribute: 2
         value: 5
     objectBinding: {fileID: 1935876365721685322, guid: 2019c1c47ed9a8444a9ca736023f8904, type: 3}
+  obstacleSizes:
+  - {x: 1, y: 1}
+  - {x: 1, y: 2}
+  - {x: 2, y: 1}
+  - {x: 2, y: 2}

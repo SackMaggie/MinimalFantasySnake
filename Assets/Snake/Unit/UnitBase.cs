@@ -14,7 +14,7 @@ namespace Snake.Unit
         [SerializeField] private int health;
         [SerializeField] private int attack;
         [SerializeField] private int defense;
-        [SerializeField] private Direction direction;
+        [SerializeField] protected Direction direction;
         [SerializeField] private bool isDead;
         [SerializeField] private UnitClassEnum unitClass;
 

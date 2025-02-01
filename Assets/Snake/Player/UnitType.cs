@@ -5,5 +5,6 @@
         HERO,
         MONSTER,
         ITEM,
+        OBSTACLE,
     }
 }
