@@ -90,7 +90,7 @@ are optional for evaluation.
 - [ ] Make game more configurable
   - [ ] Ability to specify each class stats separately
   - [ ] Ability to make monster stronger over time
-- [ ] Adding Items
-  - [ ] Recovery item
-  - [ ] Increase attack or defense
+- [x] Adding Items
+  - [x] Recovery item
+  - [x] Increase attack or defense
 - [ ] Adding Level system with progression
