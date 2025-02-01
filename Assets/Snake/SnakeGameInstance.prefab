@@ -47,9 +47,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitViewPrefab: {fileID: 8493997440950035281, guid: 3d2fe11acc9939a40ae1c81e40920891, type: 3}
   gameMenuPrefab: {fileID: 3683827367378260501, guid: a6302c47acec49a468a12bd19ea87791, type: 3}
+  uiInputPrefab: {fileID: 8858649798969476195, guid: cf1e2dee794c7d64ba23bc07e21edff5, type: 3}
   gamePlayManager: {fileID: 708530199928560524}
   worldGrid: {fileID: 2407192749039103095}
-  gameMenu: {fileID: 0}
 --- !u!1 &8506820262139545069
 GameObject:
   m_ObjectHideFlags: 0
@@ -104,10 +104,9 @@ MonoBehaviour:
   OnUnitKill:
     m_PersistentCalls:
       m_Calls: []
-  OnGameEnd:
+  OnGameStateChange:
     m_PersistentCalls:
       m_Calls: []
-  gameState: 0
 --- !u!114 &2407192749039103095
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -9,6 +9,7 @@ namespace Snake
     {
         [SerializeField] private UnitView unitViewPrefab;
         [SerializeField] private GameMenu gameMenuPrefab;
+        [SerializeField] private GameObject uiInputPrefab;
         [SerializeField] private GamePlayManager gamePlayManager;
         [SerializeField] private WorldGrid worldGrid;
 
@@ -16,6 +17,7 @@ namespace Snake
 
         private GameMenu gameMenu;
         private UnitView unitView;
+        private GameObject uiInput;
 
         protected override void Start()
         {
@@ -43,6 +45,8 @@ namespace Snake
                 unitView = Instantiate(unitViewPrefab, canvasUI.transform, false);
                 unitView.gamePlayManager = gamePlayManager;
             }
+            if (uiInput == null)
+                uiInput = Instantiate(uiInputPrefab, canvasUI.transform, false);
             gamePlayManager.OnGameStateChange.RemoveListener(OnGameStateChange);
             gamePlayManager.OnGameStateChange.AddListener(OnGameStateChange);
             gamePlayManager.InitilizeGame();
@@ -68,6 +72,8 @@ namespace Snake
                     break;
                 case GameState.GameEnded:
                     CreateGameMenu();
+                    if (uiInput != null)
+                        Destroy(uiInput);
                     break;
                 default:
                     break;
