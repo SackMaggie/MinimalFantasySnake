@@ -29,3 +29,42 @@ MonoBehaviour:
     healthRange: {x: 2, y: 15}
     attackRange: {x: 3, y: 10}
     defenseRange: {x: 0, y: 5}
+  spawnableItems:
+  - id: 1
+    spawnWeight: 10
+    property:
+      itemEffects:
+      - commandType: 0
+        attribute: 2
+        value: 5
+    objectBinding: {fileID: 0}
+  - id: 2
+    spawnWeight: 10
+    property:
+      itemEffects:
+      - commandType: 0
+        attribute: 0
+        value: 2
+    objectBinding: {fileID: 0}
+  - id: 3
+    spawnWeight: 10
+    property:
+      itemEffects:
+      - commandType: 0
+        attribute: 1
+        value: 1
+    objectBinding: {fileID: 0}
+  - id: 4
+    spawnWeight: 5
+    property:
+      itemEffects:
+      - commandType: 0
+        attribute: 0
+        value: 1
+      - commandType: 0
+        attribute: 1
+        value: 1
+      - commandType: 0
+        attribute: 2
+        value: 5
+    objectBinding: {fileID: 0}

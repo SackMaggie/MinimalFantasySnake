@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Snake.Item
 {
     [Serializable]
     public class ItemProperty
     {
+        public List<ItemEffect> itemEffects;
+
         [Serializable]
         public class ItemEffect
         {
