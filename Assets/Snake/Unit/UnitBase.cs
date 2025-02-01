@@ -33,7 +33,7 @@ namespace Snake.Unit
         }
         public virtual int UnitId
         {
-            get => unitId; 
+            get => unitId;
             set
             {
                 unitId = value;
@@ -43,7 +43,15 @@ namespace Snake.Unit
         public virtual int Health { get => health; set => health = value; }
         public virtual int Attack { get => attack; set => attack = value; }
         public virtual int Defense { get => defense; set => defense = value; }
-        public virtual Direction Direction { get => direction; set => direction = value; }
+        public virtual Direction Direction
+        {
+            get => direction;
+            set
+            {
+                transform.rotation = Quaternion.AngleAxis(value.GetRotationAngle(), Vector3.up);
+                direction = value;
+            }
+        }
         public UnityEvent<(IUnit unit, IUnit killer)> OnKilled => onKilled;
 
         GameObject IUnit.GameObject => this == null ? null : gameObject;

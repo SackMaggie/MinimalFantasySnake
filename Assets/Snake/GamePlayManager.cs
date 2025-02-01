@@ -178,11 +178,19 @@ namespace Snake
             IUnit unit = SpawnUnitType(unitType);
             unit.UnitId = CurrentUnitId++;
             unit.Position = position;
+            unit.Direction = GetRandomDirection();
             unit.ApplyStats(gameSetting.GetStatsSetting(unitType));
             unit.OnKilled.AddListener(OnUnitKilled);
             worldGrid.AddUnit(unit);
             OnUnitSpawn.Invoke(unit);
             return unit;
+
+            static Direction GetRandomDirection()
+            {
+                Direction[] directions = Enum.GetValues(typeof(Direction)).Cast<Direction>().ToArray();
+
+                return directions[Random.Range(0, directions.Length)];
+            }
         }
 
         /// <summary>

@@ -160,6 +160,15 @@ namespace Snake.Movement
             }
             return currentPosition;
         }
+
+        public static float GetRotationAngle(this Direction direction) => direction switch
+        {
+            Direction.UP => 0,
+            Direction.DOWN => 180,
+            Direction.LEFT => 270,
+            Direction.RIGHT => (float)90,
+            _ => throw new NotImplementedException(direction.ToString()),
+        };
     }
 
     public record MovementContext
