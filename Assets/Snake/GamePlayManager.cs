@@ -219,7 +219,7 @@ namespace Snake
         /// true for successful move and false for any other reason
         /// </returns>
         /// <exception cref="NotImplementedException"></exception>
-        private bool OnPlayerMove(SnakePlayer snakePlayer, MovementContext movementContext)
+        private bool OnPlayerMove(IPlayer snakePlayer, MovementContext movementContext)
         {
             if (!CheckCanPlayerMove())
                 return false;
@@ -286,6 +286,12 @@ namespace Snake
                     }
                 case IPlayer player:
                     throw new InvalidOperationException($"Should not collide with {player}");
+                case IItem item:
+                    item.OnPickUp(playerUnit);
+                    item.IsDead = true;
+                    item.KillUnit(playerUnit);
+                    MoveSnakePlayer(playerUnit, nextPosition);
+                    return true;
                 case null:
                     Debug.LogWarning("No Collision, just move");
                     MoveSnakePlayer(playerUnit, nextPosition);
