@@ -82,11 +82,11 @@ are optional for evaluation.
   - [ ] The rest of the line will be rotated accordingly.
   - [ ] Rotating does not make a move. The line of Heroes will be in the same position.
   - [ ] Example: Considering a line of Heroes A, B, and C. Pressing Q will rotate line to B, C, and A while pressing E will rotate line to C, A and B.
-- [ ] Both hero character and monster can be in one of 3 classes. These classes beat over each other in the same manner as rock-paper-scissor.
-  - [ ] Warrior deals double damage to Rogue
-  - [ ] Rogue deals double damage to Wizard
-  - [ ] Wizard deals double damage to Warrior.
-  - [ ] Damage is doubled after normal damage calculation
+- [x] Both hero character and monster can be in one of 3 classes. These classes beat over each other in the same manner as rock-paper-scissor.
+  - [x] Warrior deals double damage to Rogue
+  - [x] Rogue deals double damage to Wizard
+  - [x] Wizard deals double damage to Warrior.
+  - [x] Damage is doubled after normal damage calculation
 - [ ] Make game more configurable
   - [ ] Ability to specify each class stats separately
   - [ ] Ability to make monster stronger over time
