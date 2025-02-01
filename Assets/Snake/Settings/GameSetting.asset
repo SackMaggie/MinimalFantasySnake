@@ -29,3 +29,4 @@ MonoBehaviour:
     healthRange: {x: 2, y: 15}
     attackRange: {x: 3, y: 10}
     defenseRange: {x: 0, y: 5}
+  boardSize: {x: 20, y: 20}

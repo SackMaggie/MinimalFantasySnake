@@ -21,6 +21,7 @@ namespace Snake
         public SpawnableReference spawnableReference;
         public GameSetting gameSetting;
         public BattleManager battleManager;
+        public Arena arena;
         private SnakePlayer snakePlayer;
         public UnityEvent<IUnit> OnUnitSpawn = new UnityEvent<IUnit>();
         public UnityEvent<IUnit> OnUnitKill = new UnityEvent<IUnit>();
@@ -51,6 +52,7 @@ namespace Snake
                     Destroy(item.GameObject);
             }
             worldGridSize = gameSetting.GetBoardSize();
+            arena.Init(worldGridSize);
             worldGrid.CreateGrid(worldGridSize);
             battleManager = new BattleManager
             {

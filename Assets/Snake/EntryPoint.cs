@@ -12,6 +12,7 @@ namespace Snake
         [SerializeField] private GameObject uiInputPrefab;
         [SerializeField] private GamePlayManager gamePlayManager;
         [SerializeField] private WorldGrid worldGrid;
+        [SerializeField] private Arena arena;
 
         private Canvas canvasUI;
 
@@ -47,6 +48,7 @@ namespace Snake
             }
             if (uiInput == null)
                 uiInput = Instantiate(uiInputPrefab, canvasUI.transform, false);
+            gamePlayManager.arena = arena;
             gamePlayManager.OnGameStateChange.RemoveListener(OnGameStateChange);
             gamePlayManager.OnGameStateChange.AddListener(OnGameStateChange);
             gamePlayManager.InitilizeGame();
