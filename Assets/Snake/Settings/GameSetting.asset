@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e5a028134a871f418267995085692f4, type: 3}
+  m_Name: GameSetting
+  m_EditorClassIdentifier: 
+  spawnSettings:
+  - unitType: 0
+    maxSpawnCount: 4
+    minSpawnCount: 1
+    spawnChance: 0.6
+  - unitType: 1
+    maxSpawnCount: 5
+    minSpawnCount: 1
+    spawnChance: 0.8
+  heroStat:
+    healthRange: {x: 2, y: 20}
+    attackRange: {x: 1, y: 10}
+    defenseRange: {x: 2, y: 3}
+  monsterStat:
+    healthRange: {x: 2, y: 15}
+    attackRange: {x: 3, y: 10}
+    defenseRange: {x: 0, y: 5}
