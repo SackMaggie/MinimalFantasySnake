@@ -445,7 +445,9 @@ namespace Snake
         {
             if (GameState != GameState.Playing)
                 return;
-
+            // no hero to cycle
+            if (SnakePlayer.ChildHero.Count < 2)
+                return;
             IUnit unit = isForward ? SnakePlayer.ChildHero.First() : SnakePlayer.ChildHero.Last();
             Vector2Int position = unit.Position;
             SnakePlayer.ChildHero.Remove(unit);

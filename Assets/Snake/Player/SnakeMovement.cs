@@ -140,7 +140,6 @@ namespace Snake.Movement
         /// <param name="callbackContext"></param>
         public void HeroRotateForward(CallbackContext callbackContext)
         {
-            Debug.Log($"HeroRotateForward {callbackContext.ReadValueAsObject()} {callbackContext.phase}");
             if (callbackContext.phase == InputActionPhase.Performed)
                 RequestCycleUnitAction.Invoke(true);
         }
@@ -151,7 +150,6 @@ namespace Snake.Movement
         /// <param name="callbackContext"></param>
         public void HeroRotateBackward(CallbackContext callbackContext)
         {
-            Debug.Log($"HeroRotateBackward {callbackContext.ReadValueAsObject()} {callbackContext.phase}");
             if (callbackContext.phase == InputActionPhase.Performed)
                 RequestCycleUnitAction.Invoke(false);
         }
