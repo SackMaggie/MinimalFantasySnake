@@ -132,6 +132,16 @@ namespace Snake.Movement
                 return false;
             }
         }
+
+        public void HeroRotateForward(CallbackContext callbackContext)
+        {
+            Debug.Log($"HeroRotateForward {callbackContext.ReadValueAsObject()} {callbackContext.phase}");
+        }
+
+        public void HeroRotateBackward(CallbackContext callbackContext)
+        {
+            Debug.Log($"HeroRotateBackward {callbackContext.ReadValueAsObject()} {callbackContext.phase}");
+        }
     }
 
     public static class SnakeMovementExtension
