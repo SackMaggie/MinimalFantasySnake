@@ -16,6 +16,7 @@ namespace Snake.Unit
         [SerializeField] private int defense;
         [SerializeField] private Direction direction;
         [SerializeField] private bool isDead;
+        [SerializeField] private UnitClassEnum unitClass;
 
         private UnityEvent<(IUnit unit, IUnit killer)> onKilled = new UnityEvent<(IUnit unit, IUnit killer)>();
         protected IUnit killer = null;
@@ -57,6 +58,7 @@ namespace Snake.Unit
         GameObject IUnit.GameObject => this == null ? null : gameObject;
 
         public bool IsDead { get => isDead; set => isDead = value; }
+        public UnitClassEnum UnitClass { get => unitClass; set => unitClass = value; }
 
         public virtual void KillUnit(IUnit killer)
         {
