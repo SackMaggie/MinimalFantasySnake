@@ -1,5 +1,4 @@
 using Snake.Player;
-using Snake.Unit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +15,13 @@ namespace Snake
         [SerializeField] private StatsSetting monsterStat;
         [SerializeField] private List<ItemBinding> spawnableItems;
 
+        private static StatsSetting itemStat = new StatsSetting()
+        {
+            attackRange = Vector2Int.zero,
+            defenseRange = Vector2Int.zero,
+            healthRange = Vector2Int.one,
+        };
+
         public SpawnSetting GetSpawnSetting(UnitType unitType)
         {
             return spawnSettings.FirstOrDefault(x => x.unitType == unitType);
@@ -25,6 +31,7 @@ namespace Snake
         {
             UnitType.HERO => heroStat,
             UnitType.MONSTER => monsterStat,
+            UnitType.ITEM => itemStat,
             _ => throw new NotImplementedException(unitType.ToString()),
         };
 

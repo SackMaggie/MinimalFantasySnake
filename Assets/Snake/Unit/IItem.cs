@@ -1,7 +1,11 @@
-﻿namespace Snake.Unit
+﻿using Snake.Item;
+
+namespace Snake.Unit
 {
-    public interface IItem
+    public interface IItem : IUnit
     {
+        ItemProperty ItemProperty { get; set; }
+
         /// <summary>
         /// When the unit collied with an item
         /// </summary>

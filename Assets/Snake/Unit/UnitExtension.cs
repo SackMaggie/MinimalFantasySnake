@@ -18,5 +18,10 @@ namespace Snake.Unit
             IHeros => UnitType.HERO,
             _ => throw new NotImplementedException(unit.GetType().ToString()),
         };
+
+        public static void ApplyItemProperty(this IItem item, Item.ItemProperty itemProperty)
+        {
+            item.ItemProperty = itemProperty;
+        }
     }
 }

@@ -4,5 +4,6 @@
     {
         HERO,
         MONSTER,
+        ITEM,
     }
 }

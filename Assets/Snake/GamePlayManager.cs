@@ -60,6 +60,7 @@ namespace Snake
             snakePlayer = SpawnPlayer();
             _SpawnUnitType(UnitType.HERO);
             _SpawnUnitType(UnitType.MONSTER);
+            _SpawnUnitType(UnitType.ITEM);
             GameState = GameState.Playing;
 
 
@@ -147,19 +148,42 @@ namespace Snake
 
         private IUnit SpawnUnitType(UnitType unitType)
         {
-            GameObject gameObjectRef = spawnableReference.GetObjectFromType(unitType);
-            GameObject newGameObject = Instantiate(gameObjectRef, worldGrid.transform, false);
-            newGameObject.transform.position = worldGrid.transform.position;
+            GameObject gameObjectRef;
+            GameObject newGameObject;
+            IUnit unit;
+            switch (unitType)
+            {
+                case UnitType.HERO:
+                case UnitType.MONSTER:
+                    gameObjectRef = spawnableReference.GetObjectFromType(unitType);
+                    newGameObject = Instantiate(gameObjectRef, worldGrid.transform, false);
+                    newGameObject.transform.position = worldGrid.transform.position;
+                    unit = newGameObject.GetComponent<IUnit>();
+                    break;
+                case UnitType.ITEM:
+                    GameSetting.ItemBinding itemBinding = gameSetting.GetItemRandomly();
+                    gameObjectRef = itemBinding.objectBinding;
+                    newGameObject = Instantiate(gameObjectRef, worldGrid.transform, false);
+                    newGameObject.transform.position = worldGrid.transform.position;
+                    IItem item = newGameObject.GetComponent<IItem>();
+                    unit = item;
+
+                    item.ApplyItemProperty(itemBinding.property);
+                    break;
+                default:
+                    throw new NotImplementedException(unitType.ToString());
+            }
 
             //temp just for clarification
             newGameObject.GetComponent<Renderer>().material.color = unitType switch
             {
                 UnitType.MONSTER => Color.red,
                 UnitType.HERO => Color.green,
+                UnitType.ITEM => Color.yellow,
                 _ => throw new NotImplementedException(unitType.ToString()),
             };
 
-            return newGameObject.GetComponent<IUnit>();
+            return unit;
         }
 
         private IUnit SpawnUnitType(UnitType unitType, Vector2Int position)
