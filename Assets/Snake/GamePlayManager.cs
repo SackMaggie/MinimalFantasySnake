@@ -62,6 +62,7 @@ namespace Snake
             if (SnakePlayer != null)
                 Destroy(SnakePlayer.gameObject);
             SnakePlayer = SpawnPlayer();
+            TintTheObject(SnakePlayer.CurrentHero);
             _SpawnUnitType(UnitType.HERO);
             _SpawnUnitType(UnitType.MONSTER);
             _SpawnUnitType(UnitType.ITEM);
@@ -117,11 +118,7 @@ namespace Snake
             }
             RemoveUnitAtPosition(unit, unit.Position);
             UnitType unitType = unit.GetUnitType();
-            GameSetting.SpawnSetting spawnSetting = gameSetting.GetSpawnSetting(unitType);
-            // spawn same unit type based on configured chance
-            if (Random.value <= spawnSetting.spawnChance)
-                SpawnUnitType(unitType, worldGrid.GetEmptyPosition());
-
+            ReSpawnUnitFromChance(unitType);
             EnsureMinimumNumberOfUnitType(unitType);
 
             void RemoveUnitAtPosition(IUnit unit, Vector2Int position)
@@ -137,13 +134,29 @@ namespace Snake
             }
         }
 
+        private void OnHeroRecruited(IHeros hero)
+        {
+            ReSpawnUnitFromChance(UnitType.HERO);
+            EnsureMinimumNumberOfUnitType(UnitType.HERO);
+        }
+
+        private void ReSpawnUnitFromChance(UnitType unitType)
+        {
+            GameSetting.SpawnSetting spawnSetting = gameSetting.GetSpawnSetting(unitType);
+            // spawn same unit type based on configured chance
+            if (Random.value <= spawnSetting.spawnChance)
+                SpawnUnitType(unitType, worldGrid.GetEmptyPosition());
+        }
+
         private void EnsureMinimumNumberOfUnitType(UnitType unitType)
         {
             GameSetting.SpawnSetting spawnSetting = gameSetting.GetSpawnSetting(unitType);
             IEnumerable<IUnit> query = from IUnit unit in worldGrid.UnitGrid
-                                       where unit.GetUnitType() == unitType
+                                       where unit != null && unit.GetUnitType() == unitType && !SnakePlayer.ChildHero.Contains(unit)
                                        select unit;
-            for (int i = 0; i < spawnSetting.minSpawnCount; i++)
+            int v = query.Count();
+            Debug.Log($"EnsureMinimumNumberOfUnitType {unitType} {v}");
+            for (int i = 0; i < spawnSetting.minSpawnCount - v; i++)
             {
                 SpawnUnitType(unitType, worldGrid.GetEmptyPosition());
             }
@@ -192,17 +205,30 @@ namespace Snake
                     throw new NotImplementedException(unitType.ToString());
             }
 
-            //temp just for clarification
+            TintTheObject(unit);
+
+            return unit;
+        }
+
+        /// <summary>
+        /// temp just for clarification
+        /// </summary>
+        /// <param name="unit"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        private void TintTheObject(IUnit unit)
+        {
+            if (unit == null)
+                return;
+            GameObject newGameObject = unit.GameObject;
+            UnitType unitType = unit.GetUnitType();
             newGameObject.GetComponentInChildren<Renderer>().material.color = unitType switch
             {
                 UnitType.MONSTER => Color.red,
-                UnitType.HERO => Color.green,
+                UnitType.HERO => SnakePlayer != null && SnakePlayer.ChildHero.Contains(unit) ? Color.blue : Color.green,
                 UnitType.ITEM => Color.yellow,
                 UnitType.OBSTACLE => Color.black,
                 _ => throw new NotImplementedException(unitType.ToString()),
             };
-
-            return unit;
         }
 
         private IUnit SpawnUnitType(UnitType unitType, Vector2Int position)
@@ -383,6 +409,8 @@ namespace Snake
                         return false;
                     }
                     AddChildHero(playerUnit, nextPosition, hero, HeroAddMode.AddToBack);
+                    OnHeroRecruited(hero);
+                    TintTheObject(hero);
                     return true;
                 case IMonster monster:
                     Debug.LogWarning("Collide with monster");
