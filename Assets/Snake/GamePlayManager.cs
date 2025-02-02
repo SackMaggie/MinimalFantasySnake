@@ -178,7 +178,8 @@ namespace Snake
 
                     return true;
                 default:
-                    throw new Exception($"Invalid GameState {GameState}");
+                    Debug.LogException(new Exception($"Invalid GameState {GameState}"));
+                    return false;
             }
         }
 
@@ -473,7 +474,14 @@ namespace Snake
                             if (playerUnit.ChildHero.Count > 0)
                                 MoveSnakePlayer(playerUnit, position);
                         }
-                        MoveSnakePlayer(playerUnit, nextPosition);
+                        if (playerUnit.ChildHero.Count > 0)
+                            MoveSnakePlayer(playerUnit, nextPosition);
+                        else
+                        {
+                            Debug.LogError("Game End");
+                            GameState = GameState.GameEnded;
+                            return false;
+                        }
                         return true;
                     }
                 case null:
