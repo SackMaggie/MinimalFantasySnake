@@ -29,6 +29,8 @@ namespace Snake
         private GameState gameState = GameState.None;
         public int CurrentUnitId { get; private set; } = 1;
         public SnakePlayer SnakePlayer { get; private set; }
+        private const float cooldownMove = 0.05f;
+        private float lastMoveTime;
 
         public GameState GameState
         {
@@ -386,6 +388,9 @@ namespace Snake
                 throw new ArgumentNullException(nameof(snakePlayer));
             if (movementContext == null)
                 throw new ArgumentNullException(nameof(movementContext));
+            if (Time.time < lastMoveTime + cooldownMove)
+                return false;
+            lastMoveTime = Time.time;
 
             IPlayer playerUnit = snakePlayer;
             Vector2Int currentPosition = snakePlayer.Position;
