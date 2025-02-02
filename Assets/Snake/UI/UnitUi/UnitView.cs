@@ -1,6 +1,5 @@
 ﻿using Snake.UI;
 using Snake.Unit;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,6 +17,10 @@ namespace Snake
         {
             base.Start();
             CreateUiForEachUnit();
+            Debug.Log("UnitView.Start");
+            //for handling late hook
+            foreach (GameState item in gamePlayManager.GameStateList)
+                OnGameStateChange(item);
             gamePlayManager.OnGameStateChange.AddListener(OnGameStateChange);
             gamePlayManager.OnUnitSpawn.AddListener(OnUnitSpawn);
             gamePlayManager.OnUnitKill.AddListener(OnUnitKill);

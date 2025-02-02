@@ -37,12 +37,16 @@ namespace Snake
             {
                 Debug.Log($"GameState {value}");
                 gameState = value;
+                GameStateList.Add(value);
                 OnGameStateChange.Invoke(value);
             }
         }
 
+        public List<GameState> GameStateList = new List<GameState>();
+
         public void InitilizeGame()
         {
+            GameStateList.Clear();
             if (GameState == GameState.GameEnded)
                 GameState = GameState.CleanUp;
             GameState = GameState.Initilizing;
@@ -67,6 +71,8 @@ namespace Snake
             _SpawnUnitType(UnitType.MONSTER);
             _SpawnUnitType(UnitType.ITEM);
             _SpawnUnitType(UnitType.OBSTACLE);
+            GameState = GameState.InitilizeFinish;
+
             GameState = GameState.Playing;
 
 
@@ -129,7 +135,7 @@ namespace Snake
                     if (unit1 == unit)
                         worldGrid.Remove(unit.Position);
                     else
-                        Debug.LogError($"Requested Unit are not the same as unit in world grid, hash {unit.GetHashCode()} and {unit1.GetHashCode()}");
+                        Debug.LogError($"Requested Unit are not the same as unit in world grid, hash {unit.GetHashCode()} and {unit1.GetHashCode()} {unit} {unit1}");
                 }
             }
         }
@@ -616,6 +622,7 @@ namespace Snake
     {
         None,
         Initilizing,
+        InitilizeFinish,
         Playing,
         GameEnded,
         CleanUp,

@@ -59,4 +59,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitStatsDisplayPrefab: {fileID: 7029076868810076493, guid: 6fe1e2cd1729bc445ba03c9125c37af9, type: 3}
   container: {fileID: 4234220581589429434}
+  animationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -0.0028960896
+      outSlope: -0.0028960896
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 1
+    - serializedVersion: 3
+      time: 0.999745
+      value: 0.4997119
+      inSlope: -0.0063775177
+      outSlope: -0.0063775177
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.5476083
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  maxEvaluationRange: 5
   gamePlayManager: {fileID: 0}

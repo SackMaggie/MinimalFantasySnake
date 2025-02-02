@@ -102,10 +102,10 @@ namespace Snake.Player
         public static void PrintDebug(this NotifyCollectionChangedEventArgs eventArgs, object sender)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine($"ChildHero_CollectionChanged {eventArgs.Action} {sender}");
-            stringBuilder.AppendLine("NewItems");
+            stringBuilder.AppendLine($"NotifyCollectionChangedEventArgs {eventArgs.Action} {sender}");
             stringBuilder.AppendLine($"NewStartingIndex {eventArgs.NewStartingIndex}");
             stringBuilder.AppendLine($"OldStartingIndex {eventArgs.OldStartingIndex}");
+            stringBuilder.AppendLine("NewItems");
             if (eventArgs.NewItems != null)
             {
                 foreach (object item in eventArgs.NewItems)

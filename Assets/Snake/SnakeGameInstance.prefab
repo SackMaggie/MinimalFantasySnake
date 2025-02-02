@@ -50,6 +50,8 @@ MonoBehaviour:
   uiInputPrefab: {fileID: 8858649798969476195, guid: cf1e2dee794c7d64ba23bc07e21edff5, type: 3}
   gamePlayManager: {fileID: 708530199928560524}
   worldGrid: {fileID: 2407192749039103095}
+  arena: {fileID: 0}
+  targetGroup: {fileID: 0}
 --- !u!1 &8506820262139545069
 GameObject:
   m_ObjectHideFlags: 0
@@ -98,6 +100,7 @@ MonoBehaviour:
   worldGrid: {fileID: 2407192749039103095}
   spawnableReference: {fileID: 11400000, guid: 70c78b3191b26ed40945443cf5a3da32, type: 2}
   gameSetting: {fileID: 11400000, guid: 2458210e46dcbef459f5776a3b41934f, type: 2}
+  arena: {fileID: 0}
   OnUnitSpawn:
     m_PersistentCalls:
       m_Calls: []
