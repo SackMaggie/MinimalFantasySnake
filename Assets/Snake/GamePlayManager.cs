@@ -29,6 +29,8 @@ namespace Snake
         private GameState gameState = GameState.None;
         public int CurrentUnitId { get; private set; } = 1;
         public SnakePlayer SnakePlayer { get; private set; }
+        private const float cooldownMove = 0.05f;
+        private float lastMoveTime;
 
         public GameState GameState
         {
@@ -37,12 +39,16 @@ namespace Snake
             {
                 Debug.Log($"GameState {value}");
                 gameState = value;
+                GameStateList.Add(value);
                 OnGameStateChange.Invoke(value);
             }
         }
 
+        public List<GameState> GameStateList = new List<GameState>();
+
         public void InitilizeGame()
         {
+            GameStateList.Clear();
             if (GameState == GameState.GameEnded)
                 GameState = GameState.CleanUp;
             GameState = GameState.Initilizing;
@@ -67,6 +73,8 @@ namespace Snake
             _SpawnUnitType(UnitType.MONSTER);
             _SpawnUnitType(UnitType.ITEM);
             _SpawnUnitType(UnitType.OBSTACLE);
+            GameState = GameState.InitilizeFinish;
+
             GameState = GameState.Playing;
 
 
@@ -129,7 +137,7 @@ namespace Snake
                     if (unit1 == unit)
                         worldGrid.Remove(unit.Position);
                     else
-                        Debug.LogError($"Requested Unit are not the same as unit in world grid, hash {unit.GetHashCode()} and {unit1.GetHashCode()}");
+                        Debug.LogError($"Requested Unit are not the same as unit in world grid, hash {unit.GetHashCode()} and {unit1.GetHashCode()} {unit} {unit1}");
                 }
             }
         }
@@ -172,7 +180,8 @@ namespace Snake
 
                     return true;
                 default:
-                    throw new Exception($"Invalid GameState {GameState}");
+                    Debug.LogException(new Exception($"Invalid GameState {GameState}"));
+                    return false;
             }
         }
 
@@ -379,6 +388,9 @@ namespace Snake
                 throw new ArgumentNullException(nameof(snakePlayer));
             if (movementContext == null)
                 throw new ArgumentNullException(nameof(movementContext));
+            if (Time.time < lastMoveTime + cooldownMove)
+                return false;
+            lastMoveTime = Time.time;
 
             IPlayer playerUnit = snakePlayer;
             Vector2Int currentPosition = snakePlayer.Position;
@@ -467,7 +479,14 @@ namespace Snake
                             if (playerUnit.ChildHero.Count > 0)
                                 MoveSnakePlayer(playerUnit, position);
                         }
-                        MoveSnakePlayer(playerUnit, nextPosition);
+                        if (playerUnit.ChildHero.Count > 0)
+                            MoveSnakePlayer(playerUnit, nextPosition);
+                        else
+                        {
+                            Debug.LogError("Game End");
+                            GameState = GameState.GameEnded;
+                            return false;
+                        }
                         return true;
                     }
                 case null:
@@ -616,6 +635,7 @@ namespace Snake
     {
         None,
         Initilizing,
+        InitilizeFinish,
         Playing,
         GameEnded,
         CleanUp,

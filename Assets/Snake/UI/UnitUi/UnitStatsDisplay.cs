@@ -13,8 +13,8 @@ namespace Snake.UI
         [SerializeField] private StatsMapping health;
         [SerializeField] private StatsMapping attack;
         [SerializeField] private StatsMapping defense;
-        [FormerlySerializedAs("itemEffect")][SerializeField] private StatsMapping itemEffectPrefab;
         [SerializeField] private Transform itemEffectRoot;
+        [SerializeField] private Transform statsRoot;
         [SerializeField] private Transform targetUnitTransform;
         private UnitType unitType;
 
@@ -26,15 +26,27 @@ namespace Snake.UI
             targetUnitTransform = unit.GameObject.transform;
             unitType = unit.GetUnitType();
 
-            health.gameObject.SetActive(unitType is UnitType.HERO or UnitType.MONSTER);
-            attack.gameObject.SetActive(unitType is UnitType.HERO or UnitType.MONSTER);
-            defense.gameObject.SetActive(unitType is UnitType.HERO or UnitType.MONSTER);
+            statsRoot.gameObject.SetActive(unitType is UnitType.HERO or UnitType.MONSTER);
             itemEffectRoot.gameObject.SetActive(unitType is UnitType.ITEM);
             if (unit is IItem item)
             {
                 foreach (Item.ItemProperty.ItemEffect itemEffect in item.ItemProperty.itemEffects)
                 {
-                    StatsMapping statsMapping = Instantiate(itemEffectPrefab, itemEffectRoot, false);
+                    StatsMapping statsMapping;
+                    switch (itemEffect.attribute)
+                    {
+                        case Item.ItemProperty.UnitAttribute.Attack:
+                            statsMapping = Instantiate(attack, itemEffectRoot, false);
+                            break;
+                        case Item.ItemProperty.UnitAttribute.Defense:
+                            statsMapping = Instantiate(defense, itemEffectRoot, false);
+                            break;
+                        case Item.ItemProperty.UnitAttribute.Health:
+                            statsMapping = Instantiate(health, itemEffectRoot, false);
+                            break;
+                        default:
+                            continue;
+                    }
                     statsMapping.gameObject.SetActive(true);
                     statsMapping.valueText.text = itemEffect.GetDisplayText();
                 }
@@ -44,7 +56,6 @@ namespace Snake.UI
         protected override void Start()
         {
             base.Start();
-            itemEffectPrefab.gameObject.SetActive(false);
         }
 
         protected override void Update()

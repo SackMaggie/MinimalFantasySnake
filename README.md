@@ -87,7 +87,7 @@ are optional for evaluation.
   - [x] Rogue deals double damage to Wizard
   - [x] Wizard deals double damage to Warrior.
   - [x] Damage is doubled after normal damage calculation
-- [ ] Make game more configurable
+- [x] Make game more configurable
   - [x] Ability to specify each class stats separately [here](/Assets/Snake/Settings/GameSetting.asset)
   - [ ] Ability to make monster stronger over time
 - [x] [Adding Items](https://github.com/SackMaggie/MinimalFantasySnake/pull/2)

@@ -11,12 +11,12 @@ namespace Snake
     [CreateAssetMenu(menuName = "Snake")]
     public class GameSetting : ScriptableObject
     {
-        [SerializeField] private List<SpawnSetting> spawnSettings;
-        [SerializeField] private List<StatsSetting> heroStats;
-        [SerializeField] private List<StatsSetting> monsterStats;
-        [SerializeField] private Vector2Int boardSize = new Vector2Int(16, 16);
-        [SerializeField] private List<ItemBinding> spawnableItems;
-        [SerializeField] private List<Vector2Int> obstacleSizes;
+        [SerializeField] internal List<SpawnSetting> spawnSettings;
+        [SerializeField] internal List<StatsSetting> heroStats;
+        [SerializeField] internal List<StatsSetting> monsterStats;
+        [SerializeField] internal Vector2Int boardSize = new Vector2Int(16, 16);
+        [SerializeField] internal List<ItemBinding> spawnableItems;
+        [SerializeField] internal List<Vector2Int> obstacleSizes;
 
         private static StatsSetting itemStat = new StatsSetting()
         {
